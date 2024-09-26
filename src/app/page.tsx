@@ -10,7 +10,6 @@ interface Props {
   };
 }
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 export default async function Home({}: Props) {
   const { rows } = await sql`SELECT * FROM locations`;
 
