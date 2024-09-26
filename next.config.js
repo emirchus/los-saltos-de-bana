@@ -7,6 +7,7 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  transpilePackages: ['geist'],
 };
 
 module.exports = nextConfig;
