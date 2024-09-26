@@ -1,6 +1,7 @@
-import { GeistSans } from 'geist/font/sans';
+// eslint-disable-next-line import/no-unresolved
+import { GeistMono } from 'geist/font/mono';
 
-export const fontSans = GeistSans;
+export const fontSans = GeistMono;
 
 export const siteConfig = {
   name: 'Los Saltos de Bana',
