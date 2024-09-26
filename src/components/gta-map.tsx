@@ -1,11 +1,13 @@
 'use client';
 
+import confetti from 'canvas-confetti';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React from 'react';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { IJump } from '@/interface/jumps';
+import { useUIStore } from '@/stores/ui.store';
 
 const toBase64 = (str: string) =>
   typeof window === 'undefined' ? Buffer.from(str).toString('base64') : window.btoa(str);
@@ -23,35 +25,21 @@ const shimmer = (w: number, h: number) => `
   <animate xlink:href="#r" attributeName="x" from="-${w}" to="${w}" dur="1s" repeatCount="indefinite"  />
 </svg>`;
 
-export default function GTAMap({ jumps: dbJumps }: { jumps: IJump[] }) {
-  const [highlightedJump, setHighlightedJump] = useState<number | null>(null);
-  const [movingJump, setMovingJump] = useState<IJump | null>(null);
-  const [jumps, setJumps] = useState(dbJumps);
+export default function GTAMap({ jumps }: { jumps: IJump[] }) {
+  const { jumpsChecked } = useUIStore();
+  // const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  //   const rect = e.currentTarget.getBoundingClientRect();
+  //   const x = ((e.clientX - rect.left) / rect.width) * 100;
+  //   const y = ((e.clientY - rect.top) / rect.height) * 100;
+  //   console.log({ x, y });
+  // };
 
-  const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    console.log({ x, y });
-
-    if (movingJump) {
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      setJumps(jumps.map(jump => (jump.id === movingJump.id ? { ...jump, x, y } : jump)));
-      setMovingJump(null);
-    }
-  };
-
-  const handleMarkerClick = (e: React.MouseEvent<HTMLDivElement>, jump: IJump) => {
-    e.stopPropagation();
-    setMovingJump(jump);
-  };
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto overflow-hidden p-4">
       <TooltipProvider>
         <TransformWrapper>
-          <TransformComponent>
-            <div className="relative" onClick={handleMapClick}>
+          <TransformComponent wrapperClass="rounded-md overflow-hidden">
+            <div className="relative">
               <Image
                 src="/mapa.jpeg"
                 width={4000}
@@ -62,27 +50,35 @@ export default function GTAMap({ jumps: dbJumps }: { jumps: IJump[] }) {
                 priority
                 placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
               />
-              {jumps.map(jump => (
-                <Tooltip key={jump.id}>
-                  <TooltipTrigger asChild>
-                    <div
-                      className={`absolute flex h-5 w-5 items-center justify-center rounded-full border-2 border-[#2c2416] bg-red-500 text-xs font-bold text-white transition-all duration-200 hover:scale-110 ${
-                        highlightedJump === jump.id ? 'z-10 scale-150' : ''
-                      }`}
-                      style={{ left: `${jump.x}%`, top: `${jump.y}%`, transform: 'translate(-50%, -100%)' }}
-                      onMouseEnter={() => setHighlightedJump(jump.id)}
-                      onMouseLeave={() => setHighlightedJump(null)}
-                      onClick={e => handleMarkerClick(e, jump)}
-                    >
-                      <span>{jump.id}</span>
-                      <span className="sr-only">{jump.name}</span>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{jump.name}</p>
-                  </TooltipContent>
-                </Tooltip>
-              ))}
+              {jumps
+                .filter(jump => !jumpsChecked.includes(jump.id))
+                .map(jump => (
+                  <Tooltip key={jump.id}>
+                    <TooltipTrigger asChild>
+                      <div
+                        className={`absolute flex h-[2vh] w-[2vh] items-center justify-center rounded-full border-2 border-[#2c2416] bg-red-500 text-xs font-bold text-white transition-all duration-200 hover:scale-110`}
+                        style={{ left: `${jump.x}%`, top: `${jump.y}%`, transform: 'translate(-50%, -100%)' }}
+                        onMouseEnter={e => {
+                          if (jump.id == 8)
+                            confetti({
+                              particleCount: 100,
+                              spread: 180,
+                              origin: {
+                                x: e.clientX / window.innerWidth,
+                                y: e.clientY / window.innerHeight,
+                              },
+                              shapes: ['star'],
+                              colors: ['#ffff54'],
+                            });
+                        }}
+                      >
+                        <span>{jump.id}</span>
+                        <span className="sr-only">{jump.name}</span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>{jump.name}</TooltipContent>
+                  </Tooltip>
+                ))}
             </div>
           </TransformComponent>
         </TransformWrapper>
