@@ -41,14 +41,16 @@ export default function GTAMap({ jumps }: { jumps: IJump[] }) {
           <TransformComponent wrapperClass="rounded-md overflow-hidden">
             <div className="relative">
               <Image
-                src="/mapa.jpeg"
+                src="/mapa.webp"
                 width={4000}
                 height={4000}
                 alt="Mapa de GTA San Andreas"
                 className="h-auto w-full"
-                quality={100}
+                quality={86}
+                loading="eager"
                 priority
                 placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
               />
               {jumps
                 .filter(jump => !jumpsChecked.includes(jump.id))
