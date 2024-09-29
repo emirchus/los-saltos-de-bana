@@ -3,4 +3,5 @@ export type IJump = {
   name: string;
   x: number;
   y: number;
+  video?: string;
 };

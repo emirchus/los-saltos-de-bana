@@ -1,5 +1,8 @@
 'use client';
 
+import { YouTubeEmbed } from '@next/third-parties/google';
+import { HoverCardPortal } from '@radix-ui/react-hover-card';
+import { TooltipPortal } from '@radix-ui/react-tooltip';
 import confetti from 'canvas-confetti';
 import Image from 'next/image';
 import React from 'react';
@@ -8,6 +11,8 @@ import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { IJump } from '@/interface/jumps';
 import { useUIStore } from '@/stores/ui.store';
+import { Button } from './ui/button';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
 
 const toBase64 = (str: string) =>
   typeof window === 'undefined' ? Buffer.from(str).toString('base64') : window.btoa(str);
@@ -28,63 +33,119 @@ const shimmer = (w: number, h: number) => `
 export default function GTAMap({ jumps }: { jumps: IJump[] }) {
   const { jumpsChecked } = useUIStore();
   // const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
-  //   const rect = e.currentTarget.getBoundingClientRect();
+  //   const rect = imgRef.current?.getBoundingClientRect();
+
+  //   if (!rect) return;
+
   //   const x = ((e.clientX - rect.left) / rect.width) * 100;
   //   const y = ((e.clientY - rect.top) / rect.height) * 100;
   //   console.log({ x, y });
   // };
 
   return (
-    <div className="container mx-auto overflow-hidden p-4">
+    <div className="aspect-square">
       <TooltipProvider>
-        <TransformWrapper>
-          <TransformComponent wrapperClass="rounded-md overflow-hidden">
-            <div className="relative">
+        <TransformWrapper zoomAnimation={{ disabled: true }}>
+          <TransformComponent
+            wrapperClass={`!w-[60vw] !h-[60vw] xl:!h-[var(--map-size)] xl:!w-[var(--map-size)] !overflow-hidden rounded-xl border-2 border-dashed shadow-md`}
+            contentClass={`!w-[60vw] !h-[60vw] xl:!h-[var(--map-size)] xl:!w-[var(--map-size)]`}
+          >
+            <div className="relative z-0 h-full w-full bg-red-100">
               <Image
-                src="/mapa.webp"
-                width={4000}
-                height={4000}
+                src="/mapa (1).webp"
                 alt="Mapa de GTA San Andreas"
-                className="h-auto w-full"
+                className="aspect-square h-full w-full"
                 quality={86}
+                fill
+                style={{ objectFit: 'contain' }}
                 loading="eager"
                 priority
-                placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(700, 475))}`}
+                placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(1000, 1000))}`}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
               />
               {jumps
                 .filter(jump => !jumpsChecked.includes(jump.id))
                 .map(jump => (
-                  <Tooltip key={jump.id}>
-                    <TooltipTrigger asChild>
-                      <div
-                        className={`absolute flex h-[2vh] w-[2vh] items-center justify-center rounded-full border-2 border-[#2c2416] bg-red-500 text-xs font-bold text-white transition-all duration-200 hover:scale-110`}
-                        style={{ left: `${jump.x}%`, top: `${jump.y}%`, transform: 'translate(-50%, -100%)' }}
-                        onMouseEnter={e => {
-                          if (jump.id == 8)
-                            confetti({
-                              particleCount: 100,
-                              spread: 180,
-                              origin: {
-                                x: e.clientX / window.innerWidth,
-                                y: e.clientY / window.innerHeight,
-                              },
-                              shapes: ['star'],
-                              colors: ['#ffff54'],
-                            });
-                        }}
-                      >
-                        <span>{jump.id}</span>
-                        <span className="sr-only">{jump.name}</span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>{jump.name}</TooltipContent>
-                  </Tooltip>
+                  <MapMarker key={jump.id} jump={jump} />
                 ))}
             </div>
           </TransformComponent>
         </TransformWrapper>
       </TooltipProvider>
     </div>
+  );
+}
+
+export function MapMarker({ jump }: { jump: IJump }) {
+  if (jump.video) {
+    return (
+      <HoverCard openDelay={0}>
+        <HoverCardTrigger asChild>
+          <div
+            className={`absolute flex h-[2vh] w-[2vh] items-center justify-center rounded-full border-2 border-[#2c2416] bg-red-500 text-xs font-bold text-white transition-all duration-200 hover:scale-110`}
+            style={{ left: `${jump.x}%`, top: `${jump.y}%`, transform: 'translate(-50%, -100%)' }}
+            onMouseEnter={e => {
+              if (jump.id == 8)
+                confetti({
+                  particleCount: 100,
+                  spread: 180,
+                  origin: {
+                    x: e.clientX / window.innerWidth,
+                    y: e.clientY / window.innerHeight,
+                  },
+                  shapes: ['star'],
+                  colors: ['#ffff54'],
+                });
+            }}
+          >
+            <span>{jump.id}</span>
+            <span className="sr-only">{jump.name}</span>
+          </div>
+        </HoverCardTrigger>
+        <HoverCardPortal>
+          <HoverCardContent className="flex h-fit w-[400px] flex-col items-start justify-start">
+            <p className="text-lg font-bold">{jump.name}</p>
+            <div className="my-4 h-[200px] w-full">
+              <YouTubeEmbed videoid={jump.video!} />
+            </div>
+
+            <Button variant={'link'} asChild>
+              <a href={`https://www.youtube.com/watch?v=${jump.video}`} target="_blank">
+                Ver en YouTube
+              </a>
+            </Button>
+          </HoverCardContent>
+        </HoverCardPortal>
+      </HoverCard>
+    );
+  }
+  return (
+    <Tooltip delayDuration={0}>
+      <TooltipTrigger asChild>
+        <div
+          className={`absolute flex h-[2vh] w-[2vh] items-center justify-center rounded-full border-2 border-[#2c2416] bg-red-500 text-xs font-bold text-white transition-all duration-200 hover:scale-110`}
+          style={{ left: `${jump.x}%`, top: `${jump.y}%`, transform: 'translate(-50%, -100%)' }}
+          onMouseEnter={e => {
+            if (jump.id == 8)
+              confetti({
+                particleCount: 100,
+                spread: 180,
+                origin: {
+                  x: e.clientX / window.innerWidth,
+                  y: e.clientY / window.innerHeight,
+                },
+                shapes: ['star'],
+                colors: ['#ffff54'],
+              });
+          }}
+        >
+          <span>{jump.id}</span>
+          <span className="sr-only">{jump.name}</span>
+        </div>
+      </TooltipTrigger>
+      <TooltipPortal>
+        <TooltipContent>{jump.name}</TooltipContent>
+      </TooltipPortal>
+    </Tooltip>
   );
 }

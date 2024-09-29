@@ -76,4 +76,3 @@ src/
 ## Contribución
 
 Las contribuciones son bienvenidas. Por favor, abri un issue o un pull request para sugerir cambios o mejoras.
-

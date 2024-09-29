@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 import './globals.css';
 
-import SparklesText from '@/components/sparkle-title';
+import { Toaster } from '@/components/ui/toaster';
 import { fontSans, siteConfig } from '@/lib/config';
 import { ThemeProvider } from '@/provider/theme-provider';
 
@@ -23,6 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     title: siteConfig.name,
+    description: siteConfig.description,
     card: 'summary_large_image',
     site: siteConfig.links.twitter,
     images: [{ url: siteConfig.ogImage, alt: siteConfig.name }],
@@ -38,20 +39,8 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <body className={fontSans.className}>
         <ThemeProvider>
-          <header className="container my-8 flex flex-col items-center justify-center">
-            <SparklesText text="Mapa con todos los saltos de Bana" />
-          </header>
-          <div className="flex min-h-screen flex-col items-center justify-start justify-items-center p-8">
-            {children}
-          </div>
-          <footer className="flex w-full flex-col items-center justify-center">
-            <p className="text-sm text-gray-500">Este es un mapa de GTA San Andreas con todos los saltos del juego.</p>
-            <div className="flex flex-row gap-2">
-              <a href="https://github.com/SampProject-game/SVGMap-GTA-San-Andreas">Mapa Original</a>
-              <a href="https://github.com/emirchus/los-saltos-de-bana">GitHub</a>
-              <a href="https://x.com/pp0ke_/status/1838318507647201380/">Idea original</a>
-            </div>
-          </footer>
+          {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
