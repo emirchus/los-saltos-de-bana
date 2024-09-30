@@ -9,8 +9,17 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
+    "supabase:start": "npx supabase start",
+    "supabase:stop": "npx supabase stop",
+    "supabase:status": "npx supabase status",
+    "supabase:restart": "pnpm run supabase:stop && pnpm run supabase:start",
+    "supabase:reset": "npx supabase db reset",
+    "supabase:link": "npx supabase link",
     "supabase:generate-types": "npx supabase gen types typescript --schema public --project-id kuynskxmgfjuveklharx > src/types_db.ts",
-    "supabase:generate-seed": "npx supabase db dump --data-only -f supabase/seed.sql"
+    "supabase:generate-seed": "npx supabase db dump -f supabase/seed.sql",
+    "supabase:generate-migration": "npx supabase db diff | npx supabase migration new",
+    "supabase:push": "npx supabase db push",
+    "supabase:pull": "npx supabase db pull"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -49,6 +58,7 @@
     "lucide-react": "^0.446.0",
     "next": "14.2.4",
     "next-themes": "^0.3.0",
+    "nuqs": "^1.19.3",
     "prettier-plugin-sort-json": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

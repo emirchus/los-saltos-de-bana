@@ -28,7 +28,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
       <SidebarLayout defaultOpen={cookies().get('sidebar:state')?.value === 'true'}>
         <AppSidebar />
         <main className="flex flex-1 flex-col transition-all duration-300 ease-in-out">
-          <div className="relative m-2 h-screen rounded-md border-2 border-dashed p-2 pl-8">
+          <div className="relative m-2 min-h-screen rounded-md border-2 border-dashed p-2 pl-8">
             <SidebarTrigger className="absolute left-0 top-0" />
             {children}
           </div>

@@ -47,7 +47,7 @@ const SidebarLayout = React.forwardRef<
         ref={ref}
         data-sidebar={state}
         className={cn(
-          'flex h-screen bg-background pl-0 transition-all duration-300 ease-in-out data-[sidebar=closed]:pl-0 sm:pl-[--sidebar-width]',
+          'flex bg-background pl-0 transition-all duration-300 ease-in-out data-[sidebar=closed]:pl-0 sm:pl-[--sidebar-width]',
           className
         )}
         {...props}

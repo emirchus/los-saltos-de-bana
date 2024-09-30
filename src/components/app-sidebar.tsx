@@ -32,21 +32,21 @@ const data = {
       items: [
         {
           title: 'Crear sala',
-          url: '/bingo/create',
+          url: '/bingo?o=0',
           icon: PlusSquareIcon,
           description: 'Crea una sala de bingo para jugar con tus amigos.',
+        },
+        {
+          title: 'Unirse a sala',
+          url: '/bingo?o=1',
+          icon: ArrowRight,
+          description: 'Unite a una sala de bingo existente.',
         },
         {
           title: 'Explorar salas',
           url: '/bingo/explore',
           icon: Compass,
           description: 'Explora salas de bingo disponibles para jugar.',
-        },
-        {
-          title: 'Unirse a sala',
-          url: '/bingo/join',
-          icon: ArrowRight,
-          description: 'Unite a una sala de bingo existente.',
         },
       ],
     },

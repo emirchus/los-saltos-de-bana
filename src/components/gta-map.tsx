@@ -10,7 +10,6 @@ import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { IJump } from '@/interface/jumps';
-import { useUIStore } from '@/stores/ui.store';
 import { Button } from './ui/button';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
 
@@ -31,7 +30,6 @@ const shimmer = (w: number, h: number) => `
 </svg>`;
 
 export default function GTAMap({ jumps }: { jumps: IJump[] }) {
-  const { jumpsChecked } = useUIStore();
   // const handleMapClick = (e: React.MouseEvent<HTMLDivElement>) => {
   //   const rect = imgRef.current?.getBoundingClientRect();
 
@@ -63,11 +61,9 @@ export default function GTAMap({ jumps }: { jumps: IJump[] }) {
                 placeholder={`data:image/svg+xml;base64,${toBase64(shimmer(1000, 1000))}`}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 75vw, 60vw"
               />
-              {jumps
-                .filter(jump => !jumpsChecked.includes(jump.id))
-                .map(jump => (
-                  <MapMarker key={jump.id} jump={jump} />
-                ))}
+              {jumps.map(jump => (
+                <MapMarker key={jump.id} jump={jump} />
+              ))}
             </div>
           </TransformComponent>
         </TransformWrapper>

@@ -56,13 +56,25 @@ export function ProfileForm() {
   });
 
   useEffect(() => {
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        console.log(session);
+      })
+      .catch(error => {
+        console.error(error);
+      })
+      .finally(() => {
+        console.log('finally');
+      });
     (async () => {
-      const { data, status, error } = await supabase
+      const { data, error } = await supabase
         .from('profiles')
-        .select('*')
+        .select()
         .eq('id', '494b4562-1a08-4bcb-88c7-9eb5c9ba2b4f')
         .single();
-      console.log(data, status, error);
+
+      console.log(data, error);
     })();
   }, [profile, supabase]);
 

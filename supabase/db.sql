@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS locations (
 DELETE FROM locations;
 
 INSERT INTO "public"."locations" ("id", "name", "x", "y", "type", "video") OVERRIDING SYSTEM VALUE VALUES
-	(1, 'El Salto del Topo', 89.7, 75.8, 'salto', '0sdgiK2zN6w'),
+	(1, 'El Salto del Topo', 	89.7, 75.8, 'salto', '0sdgiK2zN6w'),
 	(2, 'El Salto del Muro', 79.6, 84.7, 'salto', 'yr_4WcULA3U'),
 	(3, 'El Salto del Creeper', 89, 69.5, 'salto', 'ygjzCeRFq44'),
 	(4, 'El Salto del Laburo', 81, 74.7, 'salto', NULL),
