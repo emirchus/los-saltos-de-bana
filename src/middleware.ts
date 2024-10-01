@@ -1,9 +1,26 @@
-import { type NextRequest } from 'next/server';
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+import { NextResponse } from 'next/server';
 
-import { updateSession } from '@/lib/supabase/middleware';
+import type { NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
-  return await updateSession(request);
+  // return await updateSession(request);
+
+  const response = NextResponse.next();
+
+  const supabase = createMiddlewareClient({ req: request, res: response });
+
+  if (request.nextUrl.pathname.startsWith('/profile')) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
+
+  return response;
 }
 
 export const config = {

@@ -35,13 +35,13 @@ export function NavUser({ user }: { user?: User | null }) {
           <Avatar className="h-7 w-7 rounded-md border">
             <AvatarImage
               src={user?.user_metadata.avatar_url}
-              alt={user?.user_metadata.name}
+              alt={user?.user_metadata.full_name}
               className="animate-in fade-in-50 zoom-in-90"
             />
-            <AvatarFallback className="rounded-md">{user?.user_metadata.name.charAt(0)}</AvatarFallback>
+            <AvatarFallback className="rounded-md">{user?.user_metadata.full_name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="grid flex-1 leading-none">
-            <div className="font-medium">{user?.user_metadata.name}</div>
+            <div className="font-medium">{user?.user_metadata.full_name}</div>
             <div className="overflow-hidden text-xs text-muted-foreground">
               <div className="line-clamp-1">{user?.email}</div>
             </div>
@@ -53,11 +53,11 @@ export function NavUser({ user }: { user?: User | null }) {
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm transition-all">
             <Avatar className="h-7 w-7 rounded-md">
-              <AvatarImage src={user?.user_metadata.avatar_url} alt={user?.user_metadata.name} />
-              <AvatarFallback>{user?.user_metadata.name.charAt(0)}</AvatarFallback>
+              <AvatarImage src={user?.user_metadata.avatar_url} alt={user?.user_metadata.full_name} />
+              <AvatarFallback>{user?.user_metadata.full_name.charAt(0)}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1">
-              <div className="font-medium">{user?.user_metadata.name}</div>
+              <div className="font-medium">{user?.user_metadata.full_name}</div>
               <div className="overflow-hidden text-xs text-muted-foreground">
                 <div className="line-clamp-1">{user?.email}</div>
               </div>

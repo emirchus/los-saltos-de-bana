@@ -1,8 +1,9 @@
 'use client';
 
 import { PlusSquareIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { parseAsNumberLiteral, useQueryState } from 'nuqs';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,9 +19,32 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WobbleCard } from '@/components/ui/wobble-card';
+import { supabase } from '@/lib/supabase/client';
+import { useUser } from '@/provider/user-provider';
 
 export const CreateRoomButton = () => {
+  const { user } = useUser();
   const [open, setOpen] = useQueryState('o', parseAsNumberLiteral([0, 1]));
+  const router = useRouter();
+
+  const [roomName, setRoomName] = useState('');
+  const [roomPrivacity, setRoomPrivacity] = useState<'public' | 'private' | 'hidden'>('public');
+
+  const createRoom = async () => {
+    const { data, error } = await supabase.rpc('create_bingo_room', {
+      room_name: roomName,
+      room_privacity: roomPrivacity,
+      creator_id: user?.id,
+    });
+
+    console.log(data);
+
+    if (error) {
+      console.error('Error creating room:', error);
+    } else {
+      router.push(`/bingo/room/${data.id}`);
+    }
+  };
 
   return (
     <Dialog
@@ -50,11 +74,14 @@ export const CreateRoomButton = () => {
         <div className="mt-4 flex flex-col gap-4">
           <div className="flex flex-col gap-4">
             <Label>Nombre de la sala</Label>
-            <Input placeholder="La sala del papu" />
+            <Input value={roomName} onChange={e => setRoomName(e.target.value)} placeholder="La sala del papu" />
           </div>
           <div className="flex flex-col gap-4">
             <Label>Estado de la sala</Label>
-            <Select defaultValue="public">
+            <Select
+              value={roomPrivacity}
+              onValueChange={value => setRoomPrivacity(value as 'public' | 'private' | 'hidden')}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Estado de la sala" />
               </SelectTrigger>
@@ -67,7 +94,7 @@ export const CreateRoomButton = () => {
         </div>
 
         <DialogFooter>
-          <Button>Crear</Button>
+          <Button onClick={createRoom}>Crear</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

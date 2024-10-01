@@ -2,7 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash } from 'lucide-react';
-import { useEffect } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -10,7 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { createClient } from '@/lib/supabase/client';
+import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/provider/user-provider';
 
@@ -38,8 +38,6 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 export function ProfileForm() {
   const { profile } = useUser();
 
-  const supabase = createClient();
-
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     mode: 'onChange',
@@ -55,57 +53,34 @@ export function ProfileForm() {
     control: form.control,
   });
 
-  useEffect(() => {
-    supabase.auth
-      .getSession()
-      .then(({ data: { session } }) => {
-        console.log(session);
-      })
-      .catch(error => {
-        console.error(error);
-      })
-      .finally(() => {
-        console.log('finally');
-      });
-    (async () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async function onSubmit(form: ProfileFormValues) {
+    try {
       const { data, error } = await supabase
         .from('profiles')
-        .select()
-        .eq('id', '494b4562-1a08-4bcb-88c7-9eb5c9ba2b4f')
-        .single();
-
-      console.log(data, error);
-    })();
-  }, [profile, supabase]);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async function onSubmit(_form: ProfileFormValues) {
-    // try {
-    //   const { data, error } = await supabase
-    //     .from('profiles')
-    //     .update({
-    //       username: form.username,
-    //       bio: form.bio,
-    //       urls: form.urls?.map(url => url.value),
-    //     })
-    //     .eq('id', profile!.id)
-    //     .select();
-    //   console.log(data);
-    //   if (error) {
-    //     toast({
-    //       title: 'Error',
-    //       description: error.message,
-    //     });
-    //   }
-    //   if (data) {
-    //     toast({
-    //       title: 'Perfil actualizado',
-    //       description: 'Tu perfil ha sido actualizado.',
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    // }
+        .update({
+          username: form.username,
+          bio: form.bio,
+          urls: form.urls?.map(url => url.value),
+        })
+        .eq('id', profile!.id)
+        .select();
+      console.log(data);
+      if (error) {
+        toast({
+          title: 'Error',
+          description: error.message,
+        });
+      }
+      if (data) {
+        toast({
+          title: 'Perfil actualizado',
+          description: 'Tu perfil ha sido actualizado.',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (

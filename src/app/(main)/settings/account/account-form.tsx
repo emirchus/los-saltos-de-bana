@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/lib/supabase/client';
 import { useUser } from '@/provider/user-provider';
 
 const accountFormSchema = z.object({
@@ -41,7 +42,7 @@ export function AccountForm() {
     },
   });
 
-  function onSubmit(data: AccountFormValues) {
+  async function onSubmit(data: AccountFormValues) {
     toast({
       title: 'Mandaste estos valores:',
       description: (
@@ -49,6 +50,19 @@ export function AccountForm() {
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
         </pre>
       ),
+    });
+
+    await supabase.auth.updateUser({
+      data: {
+        full_name: data.name,
+        user_metadata: {
+          full_name: data.name,
+        },
+      },
+    });
+
+    toast({
+      title: 'Tu cuenta se actualizó con éxito.',
     });
   }
 
@@ -76,7 +90,7 @@ export function AccountForm() {
             <FormItem>
               <FormLabel>Correo electrónico</FormLabel>
               <FormControl>
-                <Input placeholder="papu@gmail.com" {...field} />
+                <Input placeholder="papu@gmail.com" {...field} readOnly />
               </FormControl>
               <FormDescription>Tu correo electrónico se usa para la autenticación.</FormDescription>
               <FormMessage />

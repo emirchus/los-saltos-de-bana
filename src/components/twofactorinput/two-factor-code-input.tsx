@@ -92,7 +92,12 @@ export const TwoFactorCodeInput = ({ onChange, className }: Props) => {
       <div className="flex flex-row items-center justify-center gap-2" onPaste={handleOnPaste}>
         {codes.map((value, index) => (
           <>
-            {index === 3 && <span className="text-lg"> - </span>}
+            {index === 3 && (
+              <span key={`space-${index}`} className="text-lg">
+                {' '}
+                -{' '}
+              </span>
+            )}
             <Input
               key={index}
               className="h-10 w-10 text-center text-lg leading-8 shadow-sm ring-1 ring-black/50 dark:bg-black/10 dark:ring-white/10 focus-within:dark:ring-ring"

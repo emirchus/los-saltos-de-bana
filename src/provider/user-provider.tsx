@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { Profile } from '@/interface/profile';
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { fetchUserInfo } from '@/lib/supabase/query';
 
 import type { User } from '@supabase/supabase-js';
@@ -26,7 +26,6 @@ export function UserProvider({
 }) {
   const [user, setUser] = useState<User | null>(defaultUser);
   const [profile, setProfile] = useState<Profile | null>(defaultProfile);
-  const supabase = createClient();
 
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -52,7 +51,7 @@ export function UserProvider({
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, []);
 
   return <UserContext.Provider value={{ user, profile }}>{children}</UserContext.Provider>;
 }

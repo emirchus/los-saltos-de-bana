@@ -1,7 +1,9 @@
+import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
 import { redirect, RedirectType } from 'next/navigation';
 
 import { Separator } from '@/components/ui/separator';
-import { createClient } from '@/lib/supabase/server';
+import { Database } from '@/types_db';
 import { SidebarNav } from './components/sidebar-nav';
 
 const sidebarNavItems = [
@@ -24,7 +26,12 @@ interface SettingsLayoutProps {
 }
 
 export default async function SettingsLayout({ children }: SettingsLayoutProps) {
-  const supabase = createClient();
+  const cookiesStore = cookies();
+  const supabase = createServerComponentClient<Database>({
+    cookies() {
+      return cookiesStore;
+    },
+  });
 
   const { data } = await supabase.auth.getUser();
 

@@ -1,9 +1,11 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { parseAsNumberLiteral, useQueryState } from 'nuqs';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { TwoFactorCodeInput } from '@/components/twofactorinput';
+import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,15 +18,39 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { WobbleCard } from '@/components/ui/wobble-card';
+import { supabase } from '@/lib/supabase/client';
 
 export const JoinRoomButton = () => {
   const [open, setOpen] = useQueryState('o', parseAsNumberLiteral([0, 1]));
+  const [joinCode, setJoinCode] = useState<string | undefined>();
+  const [error, setError] = useState<string | undefined>();
+  const router = useRouter();
+
+  const joinRoomByCode = async () => {
+    if (!joinCode) {
+      return;
+    }
+
+    const { data: room, error } = await supabase.from('bingo_rooms').select('*').eq('join_code', joinCode).single();
+
+    if (error) {
+      console.error('Error joining room:', error);
+      setError('Código de sala inválido');
+
+      setTimeout(() => {
+        setError(undefined);
+      }, 5000);
+    } else {
+      router.push(`/bingo/room/${room.id}`);
+    }
+  };
 
   return (
     <Dialog
       open={open === 1}
       onOpenChange={open => {
         setOpen(open ? 1 : null);
+        setError(undefined);
       }}
     >
       <DialogTrigger className="col-span-1 h-full min-h-[300px]">
@@ -42,15 +68,16 @@ export const JoinRoomButton = () => {
           <DialogTitle>Ingresar a una sala</DialogTitle>
           <DialogDescription>Ingresá a una sala con el código que te dieron</DialogDescription>
         </DialogHeader>
+        {error && <Alert variant="destructive">{error}</Alert>}
         <div className="mt-4 flex flex-col gap-4">
           <div className="flex flex-col gap-4">
             <Label>Código de la sala</Label>
-            <TwoFactorCodeInput onChange={() => {}} className="w-full" />
+            <TwoFactorCodeInput onChange={setJoinCode} className="w-full" />
           </div>
         </div>
 
         <DialogFooter>
-          <Button>Unirse</Button>
+          <Button onClick={joinRoomByCode}>Unirse</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

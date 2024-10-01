@@ -1,14 +1,17 @@
 'use server';
 
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { revalidatePath } from 'next/cache';
-import { headers } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 import { createClient } from '@/lib/supabase/server';
 import { encodedRedirect } from '@/lib/utils';
+import { Database } from '@/types_db';
 
 export const signInWithTwitch = async () => {
-  const supabase = createClient();
+  const cookiesStore = cookies();
+  const supabase = createServerActionClient<Database>({ cookies: () => cookiesStore });
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'twitch',
     options: {
