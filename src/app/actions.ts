@@ -15,7 +15,10 @@ export const signInWithTwitch = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'twitch',
     options: {
-      redirectTo: 'http://localhost:3000/auth/callback',
+      redirectTo:
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:3000/auth/callback'
+          : 'https://saltos.bana.emirchus.ar/auth/callback',
       scopes: 'user:read:subscriptions',
     },
   });
