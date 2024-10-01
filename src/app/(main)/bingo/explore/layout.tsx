@@ -17,7 +17,7 @@ export default async function ExploreLayout({ children }: { children: React.Reac
     .from('bingo_rooms')
     .select('*, created_by(id, full_name)')
     .eq('status', 'active')
-    .eq('privacity', 'public')
+    .in('privacity', ['public', 'private'])
     .range(0, 9)
     .order('created_at', { ascending: false });
   console.log(data);

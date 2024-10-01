@@ -39,6 +39,7 @@ export const BentoGridItem = ({
   href: string;
   room: BingoRoom;
 }) => {
+  const [open, setOpen] = useState(false);
   const [joinCode, setJoinCode] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const router = useRouter();
@@ -68,8 +69,13 @@ export const BentoGridItem = ({
   const Element = (
     <Parent
       href={href}
+      {...(room.privacity === 'private'
+        ? {
+            onClick: () => setOpen(true),
+          }
+        : {})}
       className={cn(
-        'group/bento row-span-1 flex flex-col justify-between space-y-4 rounded-xl border border-border bg-card p-4 shadow-input transition duration-200 hover:shadow-xl',
+        'group/bento row-span-1 flex flex-col justify-between space-y-4 rounded-xl border border-border bg-card p-4 shadow-input transition duration-200 hover:cursor-pointer hover:shadow-xl',
         className
       )}
     >
@@ -88,26 +94,28 @@ export const BentoGridItem = ({
   );
 
   if (room.privacity === 'private') {
-    <Dialog>
-      <DialogTrigger asChild>{Element}</DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Ingresar a una sala</DialogTitle>
-          <DialogDescription>Ingresá a una sala con el código que te dieron</DialogDescription>
-        </DialogHeader>
-        {error && <Alert variant="destructive">{error}</Alert>}
-        <div className="mt-4 flex flex-col gap-4">
-          <div className="flex flex-col gap-4">
-            <Label>Código de la sala</Label>
-            <TwoFactorCodeInput onChange={setJoinCode} className="w-full" />
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>{Element}</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ingresar a una sala</DialogTitle>
+            <DialogDescription>Ingresá a una sala con el código que te dieron</DialogDescription>
+          </DialogHeader>
+          {error && <Alert variant="destructive">{error}</Alert>}
+          <div className="mt-4 flex flex-col gap-4">
+            <div className="flex flex-col gap-4">
+              <Label>Código de la sala</Label>
+              <TwoFactorCodeInput onChange={setJoinCode} className="w-full" />
+            </div>
           </div>
-        </div>
 
-        <DialogFooter>
-          <Button onClick={joinRoomByCode}>Unirse</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>;
+          <DialogFooter>
+            <Button onClick={joinRoomByCode}>Unirse</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
   }
 
   return Element;
