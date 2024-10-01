@@ -1,16 +1,13 @@
 'use client';
 
 import { Loader2, PlaySquare } from 'lucide-react';
+import Image from 'next/image';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import SparklesText from '@/components/sparkle-title';
 import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
 import { useRooms } from '@/provider/rooms-provider';
-
-const Skeleton = () => (
-  <div className="flex h-full min-h-[6rem] w-full flex-1 rounded-xl bg-gradient-to-br from-neutral-200 to-neutral-100 dark:from-neutral-900 dark:to-neutral-800"></div>
-);
 
 export default function ExplorePage() {
   const { rooms, refreshRooms, hasMore, loading } = useRooms();
@@ -32,12 +29,21 @@ export default function ExplorePage() {
           <BentoGridItem
             key={i}
             href={`/bingo/room/${item.id}`}
-            title={item.name}
-            creator={(item.created_by as any).full_name}
-            players={0}
-            header={<Skeleton />}
+            header={
+              <div className="flex h-full min-h-[6rem] w-full flex-1 rounded-xl bg-gradient-to-br from-neutral-200 to-neutral-100 dark:from-neutral-900 dark:to-neutral-800">
+                <Image
+                  src={'/Los_Saltos_de_Bana_no_background.png'}
+                  className="h-auto min-h-[6rem] w-full flex-1 rounded-xl object-cover"
+                  alt="Los Saltos de Bana"
+                  width={1000}
+                  height={1000}
+                  quality={86}
+                />
+              </div>
+            }
             icon={<PlaySquare className="h-4 w-4 text-neutral-500" />}
             className={i === 3 || i === 6 ? 'md:col-span-2' : ''}
+            room={item}
           />
         ))}
       </BentoGrid>
@@ -46,7 +52,7 @@ export default function ExplorePage() {
           <Loader2 className="h-4 w-4 animate-spin" />
         </div>
       ) : (
-        <div ref={ref} className="h-4 w-full bg-red-400"></div>
+        <div ref={ref} className="h-4 w-full bg-background"></div>
       )}
     </div>
   );

@@ -76,6 +76,7 @@ export default async function RoomPage({ params }: RoomPageProps) {
         <h1 className="mb-4 text-3xl font-bold">Bingo - Sala: {room.name}</h1>
       </div>
       <p className="mb-2">Creador: {(room.created_by as any).full_name}</p>
+      {(room.created_by as any).id === user.data.user!.id && <p className="mb-2">Código: {room.join_code}</p>}
       <div className="mb-4 grid grid-cols-5 gap-2">
         {bingoCard!.map((row, rowIndex) =>
           row.map((cell, colIndex) => (

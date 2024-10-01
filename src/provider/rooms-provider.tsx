@@ -2,16 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
+import { BingoRoom } from '@/interface/bingo';
 import { supabase } from '@/lib/supabase/client';
-
-import type { Database } from '@/types_db';
-
-type BingoRoom = Database['public']['Tables']['bingo_rooms']['Row'] & {
-  createdBy: {
-    id: string;
-    full_name: string;
-  };
-};
 
 interface RoomsContextType {
   rooms: BingoRoom[];

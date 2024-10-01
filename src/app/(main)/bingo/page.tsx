@@ -1,5 +1,5 @@
 import SparklesText from '@/components/sparkle-title';
-import { CreateRoomButton } from './components/create-room-button copy';
+import { CreateRoomButton } from './components/create-room-button';
 import { ExploreRoomsButton } from './components/explore-rooms-button';
 import { JoinRoomButton } from './components/join-room-button';
 

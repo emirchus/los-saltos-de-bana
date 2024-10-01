@@ -11,6 +11,7 @@ export type Database = {
           id: number;
           join_code: string | null;
           name: string;
+          players: number;
           privacity: Database['public']['Enums']['room_privacity'];
           status: string;
           updated_at: string;
@@ -22,6 +23,7 @@ export type Database = {
           id?: number;
           join_code?: string | null;
           name: string;
+          players?: number;
           privacity?: Database['public']['Enums']['room_privacity'];
           status: string;
           updated_at?: string;
@@ -33,6 +35,7 @@ export type Database = {
           id?: number;
           join_code?: string | null;
           name?: string;
+          players?: number;
           privacity?: Database['public']['Enums']['room_privacity'];
           status?: string;
           updated_at?: string;
@@ -250,6 +253,7 @@ export type Database = {
               id: number;
               join_code: string | null;
               name: string;
+              players: number;
               privacity: Database['public']['Enums']['room_privacity'];
               status: string;
               updated_at: string;
@@ -268,6 +272,7 @@ export type Database = {
               id: number;
               join_code: string | null;
               name: string;
+              players: number;
               privacity: Database['public']['Enums']['room_privacity'];
               status: string;
               updated_at: string;

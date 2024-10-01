@@ -1,9 +1,8 @@
-export interface BingoRoom {
-  called_numbers: number[] | null;
-  created_at: string;
-  id: number;
-  join_code: string | null;
-  name: string;
-  status: string;
-  updated_at: string;
-}
+import { Database } from '@/types_db';
+
+export type BingoRoom = Database['public']['Tables']['bingo_rooms']['Row'] & {
+  created_by: {
+    id: string;
+    full_name: string;
+  };
+};
