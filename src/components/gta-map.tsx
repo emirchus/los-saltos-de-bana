@@ -75,7 +75,7 @@ export default function GTAMap({ jumps }: { jumps: IJump[] }) {
 export function MapMarker({ jump }: { jump: IJump }) {
   if (jump.video) {
     return (
-      <HoverCard openDelay={0}>
+      <HoverCard openDelay={0} closeDelay={1000}>
         <HoverCardTrigger asChild>
           <div
             className={`absolute flex h-[2vh] w-[2vh] items-center justify-center rounded-full border-2 border-[#2c2416] bg-red-500 text-xs font-bold text-white transition-all duration-200 hover:scale-110`}

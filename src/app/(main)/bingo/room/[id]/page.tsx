@@ -1,10 +1,12 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
 import { notFound, redirect, RedirectType } from 'next/navigation';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Database } from '@/types_db';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { IJump } from '@/interface/jumps';
+import { createClient } from '@/lib/supabase/server';
+import { cn } from '@/lib/utils';
+import { ClipboardButton } from './clipboard-button';
 
 interface RoomPageProps {
   params: {
@@ -13,27 +15,26 @@ interface RoomPageProps {
 }
 
 export default async function RoomPage({ params }: RoomPageProps) {
-  const cookiesStore = cookies();
-
-  const supabase = createServerComponentClient<Database>({ cookies: () => cookiesStore });
-  const user = await supabase.auth.getUser();
+  const supabase = createClient();
 
   if (isNaN(Number(params.id))) {
     notFound();
   }
 
-  const { data: room } = await supabase.from('bingo_rooms').select('*, created_by(*)').eq('id', params.id).single();
+  const [user, { data: room }, { data: jumps }] = await Promise.all([
+    await supabase.auth.getUser(),
+    supabase.from('bingo_rooms').select('*, created_by(*)').eq('id', params.id).single(),
+    supabase.from('locations').select('*'),
+  ]);
 
   if (!user.data || user.error) {
     revalidatePath('/', 'page');
-    redirect('/', RedirectType.replace);
+    redirect('/?error=No se ha iniciado sesión', RedirectType.replace);
   }
 
   if (!room) {
-    notFound();
+    redirect('/?error=No se encontró la sala', RedirectType.replace);
   }
-
-  const { data: jumps } = await supabase.from('locations').select('*');
 
   const generateBingoCard = () => {
     const newCard = [];
@@ -59,8 +60,7 @@ export default async function RoomPage({ params }: RoomPageProps) {
 
     if (error) {
       console.error('Error getting or creating bingo card:', error);
-
-      //TODO: Handle error
+      redirect('/?error=No se pudo crear el bingo card', RedirectType.replace);
     }
     return data as {
       number: number;
@@ -72,41 +72,52 @@ export default async function RoomPage({ params }: RoomPageProps) {
 
   return (
     <div className="container mx-auto p-4">
-      <div className="flex flex-row items-center justify-start">
-        <h1 className="mb-4 text-3xl font-bold">Bingo - Sala: {room.name}</h1>
-      </div>
-      <p className="mb-2">Creador: {(room.created_by as any).full_name}</p>
-      {(room.created_by as any).id === user.data.user!.id && <p className="mb-2">Código: {room.join_code}</p>}
-      <div className="mb-4 grid grid-cols-5 gap-2">
+      <h1 className="mb-4 text-3xl">
+        Bingo - Sala: <span className="font-bold">{room.name}</span>
+      </h1>
+      {(room.created_by as any).id === user.data.user!.id && (
+        <div className="relative mb-4 flex max-w-md flex-col items-start justify-start gap-2">
+          <Label htmlFor="creator-name">Creador</Label>
+          <Input id="creator-name" value={(room.created_by as any).username} readOnly className="h-10" />
+        </div>
+      )}
+      {(room.created_by as any).id === user.data.user!.id && (
+        <div className="relative flex max-w-md flex-col items-start justify-start gap-2">
+          <Label htmlFor="room-code">Código de la sala</Label>
+          <Input id="room-code" value={room.join_code ?? ''} readOnly className="h-10" />
+          <ClipboardButton code={room.join_code ?? ''} />
+        </div>
+      )}
+
+      <div className="my-4 grid grid-cols-5 gap-2">
         {bingoCard!.map((row, rowIndex) =>
           row.map((cell, colIndex) => (
-            <Card key={`${rowIndex}-${colIndex}`}>
-              <CardHeader>
-                <CardTitle>{jumps!.find(jump => jump.id === cell.number)?.name}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <span className="text-xl font-bold text-card-foreground">{cell.number}</span>
-              </CardContent>
-            </Card>
+            <JumpCard jump={jumps!.find(jump => jump.id === cell.number) as IJump} key={`${rowIndex}-${colIndex}`} />
           ))
         )}
       </div>
-      {/* <div className="mb-4">
-        <h2 className="mb-2 text-xl font-bold">Números llamados</h2>
-        <div className="flex flex-wrap gap-2">
-          {calledNumbers.map(number => (
-            <span key={number} className="rounded bg-blue-500 px-2 py-1 text-white">
-              {number}
-            </span>
-          ))}
+    </div>
+  );
+}
+
+export function JumpCard({ jump }: { jump: IJump }) {
+  return (
+    <div className="w-full max-w-xs">
+      <div
+        className={cn(
+          'card group relative mx-auto flex h-[150px] w-full cursor-pointer flex-col justify-end overflow-hidden rounded-md border border-transparent p-4 shadow-xl dark:border-neutral-800',
+          'bg-[url(https://pbs.twimg.com/media/GY2NYgfWUAAEFIf?format=jpg&name=medium)] bg-cover',
+          // Preload hover image by setting it in a pseudo-element
+          'before:fixed before:inset-0 before:z-[-1] before:bg-[url(https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWlodTF3MjJ3NnJiY3Rlc2J0ZmE0c28yeWoxc3gxY2VtZzA5ejF1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/syEfLvksYQnmM/giphy.gif)] before:opacity-0',
+          'hover:bg-[url(https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWlodTF3MjJ3NnJiY3Rlc2J0ZmE0c28yeWoxc3gxY2VtZzA5ejF1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/syEfLvksYQnmM/giphy.gif)]',
+          "hover:after:absolute hover:after:inset-0 hover:after:bg-black hover:after:opacity-50 hover:after:content-['']",
+          'transition-all duration-500'
+        )}
+      >
+        <div className="relative z-50 flex h-full flex-col items-center justify-center">
+          <h3 className="text-center text-xl font-bold text-gray-50 md:text-xl">{jump.name}</h3>
         </div>
-      </div> */}
-      {/* <Button onClick={callNumber} className="bg-red-500 text-white">
-        Llamar número
-      </Button>
-      <Button onClick={() => setCurrentRoom(null)} className="ml-2">
-        Salir de la sala
-      </Button> */}
+      </div>
     </div>
   );
 }

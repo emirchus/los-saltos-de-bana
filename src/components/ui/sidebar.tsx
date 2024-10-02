@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-export const SIDEBAR_STATE_COOKIE = 'sidebar:state';
+export const SIDEBAR_STATE_COOKIE = 'navbar:state';
 
 type SidebarContext = {
   state: 'open' | 'closed';
@@ -47,7 +47,7 @@ const SidebarLayout = React.forwardRef<
         ref={ref}
         data-sidebar={state}
         className={cn(
-          'flex bg-background pl-0 transition-all duration-300 ease-in-out data-[sidebar=closed]:pl-0 sm:pl-[--sidebar-width]',
+          'flex bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,hsl(var(--secondary)),hsl(var(--background)))] pl-0 transition-all duration-300 ease-in-out data-[sidebar=closed]:pl-0 sm:pl-[--sidebar-width]',
           className
         )}
         {...props}

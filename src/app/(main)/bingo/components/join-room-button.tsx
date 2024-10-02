@@ -19,12 +19,14 @@ import {
 import { Label } from '@/components/ui/label';
 import { WobbleCard } from '@/components/ui/wobble-card';
 import { supabase } from '@/lib/supabase/client';
+import { useUser } from '@/provider/user-provider';
 
 export const JoinRoomButton = () => {
   const [open, setOpen] = useQueryState('o', parseAsNumberLiteral([0, 1]));
   const [joinCode, setJoinCode] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const router = useRouter();
+  const { setSignInAlertOpen, user } = useUser();
 
   const joinRoomByCode = async () => {
     if (!joinCode) {
@@ -47,9 +49,13 @@ export const JoinRoomButton = () => {
 
   return (
     <Dialog
-      open={open === 1}
+      open={user !== null && open === 1}
       onOpenChange={open => {
-        setOpen(open ? 1 : null);
+        if (user === null) {
+          setSignInAlertOpen(true);
+        } else {
+          setOpen(open ? 1 : null);
+        }
         setError(undefined);
       }}
     >

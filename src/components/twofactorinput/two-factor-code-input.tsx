@@ -1,6 +1,6 @@
 'use client';
 
-import { ClipboardEvent, KeyboardEvent, useState } from 'react';
+import React, { ClipboardEvent, KeyboardEvent, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 import { Input } from '../ui/input';
@@ -91,7 +91,7 @@ export const TwoFactorCodeInput = ({ onChange, className }: Props) => {
     <div className={cn('flex flex-col items-center justify-center', className)}>
       <div className="flex flex-row items-center justify-center gap-2" onPaste={handleOnPaste}>
         {codes.map((value, index) => (
-          <>
+          <React.Fragment key={index}>
             {index === 3 && (
               <span key={`space-${index}`} className="text-lg">
                 {' '}
@@ -109,7 +109,7 @@ export const TwoFactorCodeInput = ({ onChange, className }: Props) => {
               onChange={e => e.preventDefault()}
               onKeyDown={handleKeyDown(index)}
             />
-          </>
+          </React.Fragment>
         ))}
       </div>
       {errorMessage && <p className="mt-4 text-base text-destructive-foreground">{errorMessage}</p>}

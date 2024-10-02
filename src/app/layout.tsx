@@ -4,6 +4,7 @@ import './globals.css';
 
 import { Toaster } from '@/components/ui/toaster';
 import { fontSans, siteConfig } from '@/lib/config';
+import { SupabaseClientProvider } from '@/provider/supabase-provider';
 import { ThemeProvider } from '@/provider/theme-provider';
 
 export const metadata: Metadata = {
@@ -38,10 +39,12 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={fontSans.className}>
-        <ThemeProvider>
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <SupabaseClientProvider>
+          <ThemeProvider>
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </SupabaseClientProvider>
       </body>
     </html>
   );
