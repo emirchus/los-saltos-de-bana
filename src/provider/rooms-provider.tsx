@@ -65,14 +65,10 @@ export const RoomsProvider: React.FC<{
     supabase
       .channel('public:bingo_rooms')
       .on('postgres_changes', { event: 'INSERT', schema: 'public' }, payload => {
-        setRooms(prev => {
-          prev.push(payload.new as any);
-
-          return prev;
-        });
+        setRooms([payload.new as any, ...rooms]);
       })
       .subscribe();
-  }, []);
+  }, [rooms]);
 
   return (
     <RoomsContext.Provider value={{ rooms, loading, error, refreshRooms, hasMore }}>{children}</RoomsContext.Provider>

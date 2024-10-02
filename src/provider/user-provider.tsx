@@ -28,15 +28,21 @@ export function UserProvider({
   const [profile, setProfile] = useState<Profile | null>(defaultProfile);
 
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('XD', event, session);
+
       switch (event) {
         case 'SIGNED_IN':
           setUser(session?.user ?? null);
           if (session?.user) {
-            const data = await fetchUserInfo(supabase, session.user.id);
-            console.log(data);
+            setTimeout(async () => {
+              const data = await fetchUserInfo(supabase, session.user.id);
+              console.log(data);
 
-            setProfile(data);
+              setProfile(data);
+            });
           }
           break;
         case 'SIGNED_OUT':
@@ -44,12 +50,21 @@ export function UserProvider({
           break;
         case 'INITIAL_SESSION':
           setUser(session?.user ?? null);
+
+          if (session?.user) {
+            setTimeout(async () => {
+              const data = await fetchUserInfo(supabase, session.user.id);
+              console.log(data);
+
+              setProfile(data);
+            });
+          }
           break;
       }
     });
 
     return () => {
-      authListener.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
