@@ -290,6 +290,22 @@ export type Database = {
         };
         Returns: Json;
       };
+      get_user_by_id: {
+        Args: {
+          user_id: string;
+        };
+        Returns: {
+          avatar_url: string | null;
+          bio: string | null;
+          full_name: string | null;
+          id: string;
+          sub: boolean;
+          updated_at: string | null;
+          urls: string[] | null;
+          username: string | null;
+          website: string | null;
+        };
+      };
     };
     Enums: {
       location_type: 'salto' | 'clip' | 'fail';

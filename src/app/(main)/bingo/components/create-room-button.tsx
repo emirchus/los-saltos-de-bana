@@ -23,7 +23,7 @@ import { supabase } from '@/lib/supabase/client';
 import { useUser } from '@/provider/user-provider';
 
 export const CreateRoomButton = () => {
-  const { user } = useUser();
+  const { user, setSignInAlertOpen } = useUser();
   const [open, setOpen] = useQueryState('o', parseAsNumberLiteral([0, 1]));
   const router = useRouter();
 
@@ -48,9 +48,13 @@ export const CreateRoomButton = () => {
 
   return (
     <Dialog
-      open={open === 0}
+      open={user !== null && open === 0}
       onOpenChange={open => {
-        setOpen(open ? 0 : null);
+        if (user === null) {
+          setSignInAlertOpen(true);
+        } else {
+          setOpen(open ? 0 : null);
+        }
       }}
     >
       <DialogTrigger className="col-span-1 h-full min-h-[500px] lg:col-span-2 lg:min-h-[300px]">

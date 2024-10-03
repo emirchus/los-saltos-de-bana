@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -13,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { BingoRoom } from '@/interface/bingo';
 import { cn } from '@/lib/utils';
+import { useUser } from '@/provider/user-provider';
 import { TwoFactorCodeInput } from '../twofactorinput';
 import { Alert } from './alert';
 import { Button } from './button';
@@ -43,6 +43,7 @@ export const BentoGridItem = ({
   const [joinCode, setJoinCode] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
   const router = useRouter();
+  const { user, setSignInAlertOpen } = useUser();
 
   const players = room.players ?? 0;
 
@@ -64,38 +65,47 @@ export const BentoGridItem = ({
       router.push(`/bingo/room/${room.id}`);
     }
   };
-  const Parent = room.privacity === 'public' ? Link : 'div';
 
   const Element = (
-    <Parent
-      href={href}
-      {...(room.privacity === 'private'
-        ? {
-            onClick: () => setOpen(true),
-          }
-        : {})}
+    <button
+      onClick={() => {
+        if (user === null) {
+          setSignInAlertOpen(true);
+          return;
+        }
+        if (room.privacity === 'private') {
+          setOpen(true);
+        } else {
+          router.push(href);
+        }
+      }}
       className={cn(
-        'group/bento row-span-1 flex flex-col justify-between space-y-4 rounded-xl border border-border bg-card p-4 shadow-input transition duration-200 hover:cursor-pointer hover:shadow-xl',
+        'group/bento row-span-1 flex flex-col items-start justify-between space-y-4 rounded-xl border border-border bg-card p-4 shadow-input transition duration-200 hover:cursor-pointer hover:shadow-xl',
         className
       )}
     >
       {header}
-      <div className="transition duration-200 group-hover/bento:translate-x-2">
+      <div className="flex flex-col items-start justify-between transition duration-200 group-hover/bento:translate-x-2">
         {icon}
         <div className="mb-2 mt-2 font-sans font-semibold leading-none tracking-tight text-card-foreground">
           {room.name}
         </div>
         <div className="font-sans text-xs font-normal text-muted-foreground">
-          Creado por: {room.created_by.full_name}
+          <span className="font-bold">Creado por:</span> {room.created_by.username}
         </div>
-        <div className="font-sans text-xs font-normal text-muted-foreground">{players} jugadores</div>
+        <div className="font-sans text-xs font-normal text-muted-foreground">
+          <span className="font-bold">Jugadores:</span> {players}
+        </div>
+        <div className="font-sans text-xs font-normal text-muted-foreground">
+          <span className="font-bold">Privacidad:</span> {room.privacity === 'private' ? 'Privada' : 'Pública'}
+        </div>
       </div>
-    </Parent>
+    </button>
   );
 
   if (room.privacity === 'private') {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={user !== null && open} onOpenChange={setOpen}>
         <DialogTrigger asChild>{Element}</DialogTrigger>
         <DialogContent>
           <DialogHeader>
