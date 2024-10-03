@@ -100,7 +100,7 @@ export default async function RoomPage({ params }: RoomPageProps) {
   );
 }
 
-export function JumpCard({ jump }: { jump: IJump }) {
+function JumpCard({ jump }: { jump: IJump }) {
   return (
     <div className="w-full max-w-xs">
       <div
