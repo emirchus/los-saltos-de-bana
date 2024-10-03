@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { BingoRoom } from '@/interface/bingo';
 import { supabase } from '@/lib/supabase/client';
+import { fetchUserInfo } from '@/lib/supabase/query';
 
 interface RoomsContextType {
   rooms: BingoRoom[];
@@ -32,7 +33,7 @@ export const RoomsProvider: React.FC<{
       setLoading(true);
       const { data, error } = await supabase
         .from('bingo_rooms')
-        .select('*')
+        .select('*, created_by(id, username)')
         .eq('status', 'active')
         .range(rooms.length, rooms.length + 9)
         .order('created_at', { ascending: false });
@@ -64,10 +65,45 @@ export const RoomsProvider: React.FC<{
   useEffect(() => {
     supabase
       .channel('public:bingo_rooms')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public' }, payload => {
-        setRooms([payload.new as any, ...rooms]);
-      })
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'bingo_rooms', filter: 'privacity=in=("public","private")' },
+        async payload => {
+          const user = await fetchUserInfo(supabase, payload.new.created_by);
+          setRooms([{ ...payload.new, created_by: user } as any, ...rooms]);
+        }
+      )
       .subscribe();
+
+    supabase
+      .channel('public:update:bingo_rooms')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'bingo_rooms', filter: 'privacity=in=("public","private")' },
+        async payload => {
+          console.log('Change received!', payload);
+
+          console.log(payload);
+          const room = payload.new as BingoRoom;
+          const index = rooms.findIndex(r => r.id === room.id);
+          if (index !== -1) {
+            setRooms(prevRooms => [
+              ...prevRooms.slice(0, index),
+              {
+                ...prevRooms[index],
+                ...room,
+              },
+              ...prevRooms.slice(index + 1),
+            ]);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.channel('public:bingo_rooms').unsubscribe();
+      supabase.channel('public:update:bingo_rooms').unsubscribe();
+    };
   }, [rooms]);
 
   return (

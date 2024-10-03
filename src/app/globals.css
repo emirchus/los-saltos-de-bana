@@ -4,6 +4,12 @@
 
 @layer base {
   :root {
+    --color-1: 0 100% 63%;
+    --color-2: 270 100% 63%;
+    --color-3: 210 100% 63%;
+    --color-4: 195 100% 63%;
+    --color-5: 90 100% 63%;
+
     --background: 155 36% 100%;
     --foreground: 155 71% 1%;
     --muted: 155 5% 95%;
@@ -56,6 +62,6 @@
     @apply border-border;
   }
   body {
-    @apply min-h-screen bg-background font-sans antialiased;
+    @apply min-h-screen overflow-x-hidden bg-background font-sans antialiased;
   }
 }
