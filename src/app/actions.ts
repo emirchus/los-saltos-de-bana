@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 import { encodedRedirect } from '@/lib/utils';
 
 export const signInWithTwitch = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'twitch',
@@ -28,7 +28,7 @@ export const signInWithTwitch = async () => {
 };
 
 export const signOutAction = async () => {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
 
   revalidatePath('/', 'layout');

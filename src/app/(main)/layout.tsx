@@ -9,7 +9,7 @@ import type { Profile } from '@/interface/profile';
 import type { User } from '@supabase/supabase-js';
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data } = await supabase.auth.getUser();
 
