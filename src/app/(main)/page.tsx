@@ -3,13 +3,7 @@ import { IJump } from '@/interface/jumps';
 import { createClient } from '@/lib/supabase/server';
 import { cn } from '@/lib/utils';
 
-interface Props {
-  searchParams: {
-    q?: string;
-  };
-}
-
-export default async function Home({}: Props) {
+export default async function Home() {
   const supabase = await createClient();
   const { data } = await supabase.from('locations').select('*');
 
