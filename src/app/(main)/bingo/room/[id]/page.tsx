@@ -9,13 +9,33 @@ import { cn } from '@/lib/utils';
 import { ClipboardButton } from './clipboard-button';
 
 interface RoomPageProps {
-  params: {
+  params: Promise<{
     id: string;
+  }>;
+}
+
+export async function generateMetadata(props: RoomPageProps) {
+  const params = await props.params;
+
+  if (isNaN(Number(params.id))) {
+    notFound();
+  }
+
+  const supabase = await createClient();
+
+  const [{ data: room }] = await Promise.all([
+    supabase.from('bingo_rooms').select('*, created_by(*)').eq('id', params.id).single(),
+  ]);
+
+  return {
+    title: room?.name,
+    description: 'Juega bingo con tus amigos.',
   };
 }
 
-export default async function RoomPage({ params }: RoomPageProps) {
-  const supabase = createClient();
+export default async function RoomPage(props: RoomPageProps) {
+  const params = await props.params;
+  const supabase = await createClient();
 
   if (isNaN(Number(params.id))) {
     notFound();

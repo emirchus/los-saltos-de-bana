@@ -24,7 +24,7 @@ interface SettingsLayoutProps {
 }
 
 export default async function SettingsLayout({ children }: SettingsLayoutProps) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data } = await supabase.auth.getUser();
 

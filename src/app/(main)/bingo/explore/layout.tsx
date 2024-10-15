@@ -10,7 +10,7 @@ export const metadata = {
 };
 
 export default async function ExploreLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const [{ data }, { count }] = await Promise.all([
     supabase
