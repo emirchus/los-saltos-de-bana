@@ -1,8 +1,10 @@
+import { Metadata } from 'next';
 import { notFound, redirect, RedirectType } from 'next/navigation';
 
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { IJump } from '@/interface/jumps';
+import { siteConfig } from '@/lib/config';
 import { createClient } from '@/lib/supabase/server';
 import { cn } from '@/lib/utils';
 import { ClipboardButton } from './clipboard-button';
@@ -13,7 +15,7 @@ interface RoomPageProps {
   }>;
 }
 
-export async function generateMetadata(props: RoomPageProps) {
+export async function generateMetadata(props: RoomPageProps): Promise<Metadata> {
   const params = await props.params;
 
   if (isNaN(Number(params.id))) {
@@ -29,6 +31,13 @@ export async function generateMetadata(props: RoomPageProps) {
   return {
     title: room?.name,
     description: 'Juega bingo con tus amigos.',
+    twitter: {
+      title: room?.name,
+      description: 'Juega bingo con tus amigos.',
+      card: 'summary_large_image',
+      site: siteConfig.links.twitter,
+      images: [{ url: siteConfig.ogImage, alt: siteConfig.name }],
+    },
   };
 }
 

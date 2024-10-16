@@ -37,17 +37,6 @@ export default async function Image({ params }: RoomPageProps) {
         <div
           style={{
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <svg height={80} viewBox="0 0 75 65" fill="black" style={{ margin: '0 75px' }}>
-            <path d="M37.59.25l36.95 64H.64l36.95-64z"></path>
-          </svg>
-        </div>
-        <div
-          style={{
-            display: 'flex',
             fontSize: 40,
             fontStyle: 'normal',
             color: 'black',
