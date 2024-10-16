@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { supabase } from '@/lib/supabase/client';
 import TwitchButton from './twitch-button';
 
 import type { User } from '@supabase/supabase-js';
@@ -79,7 +80,13 @@ export function NavUser({ user }: { user?: User | null }) {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-2" onClick={() => signOutAction()}>
+        <DropdownMenuItem
+          className="gap-2"
+          onClick={async () => {
+            await supabase.auth.signOut();
+            await signOutAction();
+          }}
+        >
           <LogOut className="h-4 w-4 text-muted-foreground" />
           Cerrar sesión
         </DropdownMenuItem>

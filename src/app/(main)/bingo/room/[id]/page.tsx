@@ -1,4 +1,3 @@
-import { revalidatePath } from 'next/cache';
 import { notFound, redirect, RedirectType } from 'next/navigation';
 
 import { Input } from '@/components/ui/input';
@@ -48,7 +47,6 @@ export default async function RoomPage(props: RoomPageProps) {
   ]);
 
   if (!user.data || user.error) {
-    revalidatePath('/', 'page');
     redirect('/?error=No se ha iniciado sesión', RedirectType.replace);
   }
 
