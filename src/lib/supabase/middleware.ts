@@ -31,10 +31,10 @@ export const updateSession = async (request: NextRequest) => {
     );
     const user = await supabase.auth.getUser();
 
-    const protectedRoutes = ['/profile'];
+    const protectedRoutes = ['/profile', '/admin'];
 
     if (protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route)) && user.error) {
-      return NextResponse.redirect(new URL('/', request.url));
+      return NextResponse.redirect(new URL('/login', request.url));
     }
 
     return response;
