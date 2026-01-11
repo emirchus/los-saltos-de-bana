@@ -1,4 +1,4 @@
-import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
+import { Suspense } from 'react';
 import { globalRankAction } from '@/app/(main)/(piolas)/actions/global-rank-action';
 import { weekRankAction } from '@/app/(main)/(piolas)/actions/week-rank-action';
 import { StarsView } from '@/app/(main)/(piolas)/components/stars-view';
@@ -16,27 +16,24 @@ const PAGE_SIZE = 100;
 const DEFAULT_PAGE = 0;
 
 export default async function PiolasPage({ searchParams }: Props) {
-  const queryClient = new QueryClient();
+  const params = await searchParams;
+  const pageNum = Number(params.page) || DEFAULT_PAGE;
+  const pageSizeNum = Number(params.pageSize) || PAGE_SIZE;
 
-  const { page, pageSize } = await searchParams;
-
-  await queryClient.prefetchQuery({
-    queryKey: ['week-rank', { page: Number(page) || DEFAULT_PAGE, pageSize: Number(pageSize) || PAGE_SIZE }],
-    queryFn: () => weekRankAction({ page: Number(page) || DEFAULT_PAGE, pageSize: Number(pageSize) || PAGE_SIZE }),
-  });
-
-  await queryClient.prefetchQuery({
-    queryKey: ['global-rank', { page: Number(page) || DEFAULT_PAGE, pageSize: Number(pageSize) || PAGE_SIZE }],
-    queryFn: () => globalRankAction({ page: Number(page) || DEFAULT_PAGE, pageSize: Number(pageSize) || PAGE_SIZE }),
-  });
+  // Prefetch de datos usando cache (se incluyen en el static shell cuando es posible)
+  // Cada combinación de page/pageSize tiene su propia entrada de cache
+  const [weekRankData, globalRankData] = await Promise.all([
+    weekRankAction({ page: pageNum, pageSize: pageSizeNum }),
+    globalRankAction({ page: pageNum, pageSize: pageSizeNum }),
+  ]);
 
   return (
     <div className="w-full h-full relative overflow-auto overflow-x-hidden">
       <VideoBackground />
       <StarsView />
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <PiolasPageClient />
-      </HydrationBoundary>
+      <Suspense fallback={<div className="container mx-auto px-4 py-12 max-w-6xl relative z-10">Cargando...</div>}>
+        <PiolasPageClient initialWeekRank={weekRankData} initialGlobalRank={globalRankData} />
+      </Suspense>
     </div>
   );
 }
