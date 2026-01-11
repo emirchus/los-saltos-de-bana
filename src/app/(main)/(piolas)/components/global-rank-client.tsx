@@ -3,7 +3,7 @@
 import { Crown, Star } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSearchParams } from 'next/navigation';
-import { useGlobalRank } from '@/app/(main)/piolas/hooks/use-global-rank';
+import { useGlobalRank } from '@/app/(main)/(piolas)/hooks/use-global-rank';
 
 export const GlobalRankClient = () => {
   const searchParams = useSearchParams();
@@ -12,7 +12,7 @@ export const GlobalRankClient = () => {
 
   const { data, isLoading, error } = useGlobalRank(page, pageSize);
 
-  if (isLoading) {
+  if (isLoading || !data || data.length === 0) {
     return <div>Cargando...</div>;
   }
 

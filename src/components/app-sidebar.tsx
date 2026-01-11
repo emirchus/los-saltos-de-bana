@@ -22,16 +22,15 @@ const data = {
     {
       title: 'Secciones',
       url: '#',
-      isActive: true,
       items: [
         {
-          title: 'Saltos',
+          title: 'Piolas',
           url: '/',
           isActive: true,
         },
         {
-          title: 'Piolas',
-          url: '/piolas',
+          title: 'Saltos',
+          url: '/saltos',
         },
       ],
     },

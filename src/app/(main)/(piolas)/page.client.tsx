@@ -2,8 +2,8 @@
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
 import { Suspense, useState } from 'react';
-import { GlobalRankClient } from '@/app/(main)/piolas/components/global-rank-client';
-import { WeekRankClient } from '@/app/(main)/piolas/components/week-rank-client';
+import { GlobalRankClient } from '@/app/(main)/(piolas)/components/global-rank-client';
+import { WeekRankClient } from '@/app/(main)/(piolas)/components/week-rank-client';
 
 export function PiolasPageClient() {
   const [activeTab, setActiveTab] = useState<'semanal' | 'global'>('semanal');
