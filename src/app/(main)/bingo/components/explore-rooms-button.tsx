@@ -12,7 +12,7 @@ export const ExploreRoomsButton = () => {
           <h2 className="max-w-sm text-balance text-left text-base font-semibold tracking-[-0.015em] text-white md:max-w-lg md:text-xl lg:text-3xl">
             Explorar salas
           </h2>
-          <p className="mt-4 max-w-[26rem] text-left text-base/6 text-neutral-200">
+          <p className="mt-4 max-w-104 text-left text-base/6 text-neutral-200">
             Explora salas públicas y jugá con desconocidos
           </p>
         </div>

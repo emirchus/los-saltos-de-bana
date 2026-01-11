@@ -30,10 +30,10 @@ export default function ExplorePage() {
             key={i}
             href={`/bingo/room/${item.id}`}
             header={
-              <div className="flex h-full min-h-[6rem] w-full flex-1 rounded-xl bg-gradient-to-br from-neutral-200 to-neutral-100 dark:from-neutral-900 dark:to-neutral-800">
+              <div className="flex h-full min-h-24 w-full flex-1 rounded-xl bg-linear-to-br from-neutral-200 to-neutral-100 dark:from-neutral-900 dark:to-neutral-800">
                 <Image
                   src={'/Los_Saltos_de_Bana_no_background.png'}
-                  className="h-auto min-h-[6rem] w-full flex-1 rounded-xl object-cover"
+                  className="h-auto min-h-24 w-full flex-1 rounded-xl object-cover"
                   alt="Los Saltos de Bana"
                   width={1000}
                   height={1000}

@@ -41,12 +41,14 @@ export default function GTAMap({ jumps }: { jumps: IJump[] }) {
   // };
 
   return (
-    <div className="aspect-square">
+    <div className="aspect-square flex items-center justify-center" style={{
+      "--map-size": "70rem",
+    } as React.CSSProperties}>
       <TooltipProvider>
         <TransformWrapper zoomAnimation={{ disabled: true }}>
           <TransformComponent
-            wrapperClass={`!w-[60vw] !h-[60vw] xl:!h-[var(--map-size)] xl:!w-[var(--map-size)] !overflow-hidden rounded-xl border-2 border-dashed shadow-md`}
-            contentClass={`!w-[60vw] !h-[60vw] xl:!h-[var(--map-size)] xl:!w-[var(--map-size)]`}
+            wrapperClass={`w-[60vw]! h-[60vw]! xl:h-(--map-size)! xl:w-(--map-size)! overflow-hidden! rounded-xl border-2 border-dashed shadow-md`}
+            contentClass={`w-[60vw]! h-[60vw]! xl:h-(--map-size)! xl:w-(--map-size)!`}
           >
             <div className="relative z-0 h-full w-full bg-red-100">
               <Image

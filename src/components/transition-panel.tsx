@@ -1,6 +1,6 @@
 'use client';
 
-import { AnimatePresence, motion, MotionProps, Transition, Variant } from 'framer-motion';
+import { AnimatePresence, MotionProps, motion, Transition, Variant } from 'motion/react';
 
 import { cn } from '@/lib/utils';
 

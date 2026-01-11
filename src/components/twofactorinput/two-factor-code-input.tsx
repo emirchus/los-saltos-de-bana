@@ -100,7 +100,7 @@ export const TwoFactorCodeInput = ({ onChange, className }: Props) => {
             )}
             <Input
               key={index}
-              className="h-10 w-10 text-center text-lg leading-8 shadow-sm ring-1 ring-black/50 dark:bg-black/10 dark:ring-white/10 focus-within:dark:ring-ring"
+              className="h-10 w-10 text-center text-lg leading-8 shadow-sm ring-1 ring-black/50 dark:bg-black/10 dark:ring-white/10 dark:focus-within:ring-ring"
               value={value}
               type="text"
               id={`code-${index}`}
