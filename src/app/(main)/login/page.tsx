@@ -5,7 +5,7 @@ import { LoginForm } from './components/login-form';
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: { error?: string; success?: string; next?: string };
+  searchParams: Promise<{ error?: string; success?: string; next?: string }>;
 }) {
   const supabase = await createClient();
   const {
@@ -14,7 +14,7 @@ export default async function LoginPage({
 
   // Si ya está autenticado, redirigir
   if (user) {
-    redirect(searchParams.next || '/');
+    redirect((await searchParams).next || '/');
   }
 
   return (
@@ -22,11 +22,13 @@ export default async function LoginPage({
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Iniciar Sesión</h1>
-          <p className="text-sm text-muted-foreground">
-            Ingresa tus credenciales para acceder a tu cuenta
-          </p>
+          <p className="text-sm text-muted-foreground">Ingresa tus credenciales para acceder a tu cuenta</p>
         </div>
-        <LoginForm error={searchParams.error} success={searchParams.success} next={searchParams.next} />
+        <LoginForm
+          error={(await searchParams).error}
+          success={(await searchParams).success}
+          next={(await searchParams).next}
+        />
       </div>
     </div>
   );

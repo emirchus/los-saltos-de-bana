@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import './globals.css';
 
+import { Footer } from '@/components/footer';
 import { PiolaStatusSplash } from '@/components/piola-status-splash';
 import { Toaster } from '@/components/ui/sonner';
 import { fontSans, pricedownBl, siteConfig } from '@/lib/config';
@@ -56,6 +57,7 @@ export default function RootLayout({
           <SupabaseClientProvider>
             <ThemeProvider>
               {children}
+              <Footer />
               <PiolaStatusSplash />
               <Toaster />
             </ThemeProvider>

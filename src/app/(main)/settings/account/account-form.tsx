@@ -53,9 +53,6 @@ export function AccountForm() {
     await supabase.auth.updateUser({
       data: {
         full_name: data.name,
-        user_metadata: {
-          full_name: data.name,
-        },
       },
     });
 

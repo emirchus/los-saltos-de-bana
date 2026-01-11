@@ -83,7 +83,7 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="wall_bonus_points">Puntos Bonus del Muro</Label>
+              <Label htmlFor="wall_bonus_points">Puntos Bonus del WallText</Label>
               <Input
                 id="wall_bonus_points"
                 type="number"
@@ -93,7 +93,7 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="wall_min_chars">Mínimo de Caracteres del Muro</Label>
+              <Label htmlFor="wall_min_chars">Mínimo de Caracteres del WallText</Label>
               <Input
                 id="wall_min_chars"
                 type="number"
@@ -116,8 +116,8 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="wall_boost_enabled">Boost del Muro Habilitado</Label>
-                <p className="text-sm text-muted-foreground">Activar el boost del muro</p>
+                <Label htmlFor="wall_boost_enabled">Boost del WallText Habilitado</Label>
+                <p className="text-sm text-muted-foreground">Activar el boost del WallText</p>
               </div>
               <Switch
                 id="wall_boost_enabled"
