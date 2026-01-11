@@ -116,6 +116,13 @@ export const WeekRankClient = ({ initialData }: WeekRankClientProps) => {
                 >
                   <motion.div
                     className="absolute inset-0 rounded-full bg-white/20"
+                    style={{
+                      backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                      backgroundImage: `url(/api/image?username=${player.username})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
+                    }}
                     animate={{
                       scale: [1, 1.1, 1],
                       opacity: [0.5, 0, 0.5],
@@ -126,7 +133,9 @@ export const WeekRankClient = ({ initialData }: WeekRankClientProps) => {
                       ease: 'easeInOut',
                     }}
                   />
-                  <span className="relative z-10 text-white drop-shadow-lg">{player.username.charAt(0)}</span>
+                  <span className="relative z-10 text-white drop-shadow-lg">
+                    <span>{player.username.charAt(0)}</span>
+                  </span>
                 </motion.div>
               </motion.div>
 
@@ -216,9 +225,13 @@ export const WeekRankClient = ({ initialData }: WeekRankClientProps) => {
             <div className="text-zinc-500 font-bold text-lg">#{index + 4}</div>
             <div className="flex items-center gap-4">
               <motion.div
-                className="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold text-white shadow-lg border-2 border-white/20"
+                className="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold text-white shadow-lg border-2 border-white/20 relative"
                 style={{
                   backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                  backgroundImage: `url(/api/image?username=${player.username})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
                 }}
                 whileHover={{
                   scale: 1.3,
@@ -227,7 +240,7 @@ export const WeekRankClient = ({ initialData }: WeekRankClientProps) => {
                 }}
                 transition={{ duration: 0.5, type: 'spring' }}
               >
-                {player.username.charAt(0)}
+                <span>{player.username.charAt(0)}</span>
               </motion.div>
               <span className="font-bold text-white text-lg group-hover:text-amber-300 transition-colors">
                 {player.username}
