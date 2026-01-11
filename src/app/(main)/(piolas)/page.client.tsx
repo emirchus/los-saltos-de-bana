@@ -22,9 +22,9 @@ export function PiolasPageClient({ initialWeekRank, initialGlobalRank }: PiolasP
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }}
       >
-        <motion.h1 className="text-6xl md:text-8xl font-black mb-4 uppercase tracking-wider relative inline-block font-pricedown-bl text-white text-border-shadow">
-          Los Más Piola
-        </motion.h1>
+        <motion.div className="text-6xl md:text-8xl font-black mb-4 uppercase tracking-wider relative inline-block font-pricedown-bl text-white text-border-shadow h-[100px] w-[500px]">
+          <Image src="/header.png" alt="Piolas" width={1000} height={200} className="object-contain" />
+        </motion.div>
       </motion.div>
       <motion.div
         className="flex items-center justify-center gap-4 mb-32"
