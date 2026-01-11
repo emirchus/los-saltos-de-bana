@@ -2,11 +2,13 @@
 import { GalleryVerticalEnd, Minus, Plus } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
+import { NavUser } from '@/components/nav-user';
 import { Logo } from '@/components/team-switcher';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -17,6 +19,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar';
+import { useUser } from '@/provider/user-provider';
 
 // This is sample data.
 const data = {
@@ -33,6 +36,10 @@ const data = {
           title: 'Saltos',
           url: '/saltos',
         },
+        {
+          title: 'Administrador',
+          url: '/admin',
+        },
       ],
     },
   ],
@@ -40,6 +47,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+  const { user } = useUser();
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -82,6 +90,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

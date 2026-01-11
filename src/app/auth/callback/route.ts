@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server';
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get('code');
+  const type = requestUrl.searchParams.get('type');
   const origin = requestUrl.origin;
   const next = requestUrl.searchParams.get('next') ?? '/';
 
@@ -18,28 +19,51 @@ export async function GET(request: Request) {
     const forwardedHost = request.headers.get('x-forwarded-host');
     const isLocalEnv = process.env.NODE_ENV === 'development';
 
-    const url = `https://api.twitch.tv/helix/subscriptions/user?broadcaster_id=83953406&user_id=${session?.user.user_metadata.sub}`;
+    // Si es un reset de contraseña, redirigir a la página de reset
+    if (type === 'recovery') {
+      const redirectUrl = isLocalEnv
+        ? `${origin}/auth/reset-password`
+        : forwardedHost
+          ? `https://${forwardedHost}/auth/reset-password`
+          : `${origin}/auth/reset-password`;
+      return NextResponse.redirect(redirectUrl);
+    }
 
-    const options = {
-      method: 'GET',
-      headers: {
-        'Client-ID': process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID || '',
-        Authorization: `Bearer ${session?.provider_token}`,
-      },
-    };
+    // Si es OAuth con Twitch, procesar la suscripción
+    if (session?.user.user_metadata.provider === 'twitch') {
+      const url = `https://api.twitch.tv/helix/subscriptions/user?broadcaster_id=83953406&user_id=${session.user.user_metadata.sub}`;
 
-    const { data, error } = await fetch(url, options).then(res => res.json());
+      const options = {
+        method: 'GET',
+        headers: {
+          'Client-ID': process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID || '',
+          Authorization: `Bearer ${session.provider_token}`,
+        },
+      };
 
-    await supabase.from('profiles').upsert([
-      {
-        id: user?.id as string,
-        sub: error == null && data.length > 0,
-        username: user?.user_metadata.user_name || user?.user_metadata.name,
-        full_name: user?.user_metadata.name,
-        avatar_url: user?.user_metadata.avatar_url,
-        website: user?.user_metadata.website,
-      },
-    ]);
+      const { data, error } = await fetch(url, options).then(res => res.json());
+
+      await supabase.from('profiles').upsert([
+        {
+          id: user?.id as string,
+          sub: error == null && data.length > 0,
+          username: user?.user_metadata.user_name || user?.user_metadata.name,
+          full_name: user?.user_metadata.name,
+          avatar_url: user?.user_metadata.avatar_url,
+          website: user?.user_metadata.website,
+        },
+      ]);
+    } else if (user) {
+      // Para usuarios que se registran con email, crear perfil básico
+      await supabase.from('profiles').upsert([
+        {
+          id: user.id,
+          username: user.email?.split('@')[0] || null,
+          full_name: user.user_metadata.full_name || null,
+          avatar_url: user.user_metadata.avatar_url || null,
+        },
+      ]);
+    }
 
     if (isLocalEnv) {
       return NextResponse.redirect(`${origin}${next}`);
