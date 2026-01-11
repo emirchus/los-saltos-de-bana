@@ -3,7 +3,7 @@
 import { Crown } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSearchParams } from 'next/navigation';
-import { useWeekRank } from '@/app/(main)/piolas/hooks/use-week-rank';
+import { useWeekRank } from '@/app/(main)/(piolas)/hooks/use-week-rank';
 
 export const WeekRankClient = () => {
   const searchParams = useSearchParams();
@@ -12,7 +12,7 @@ export const WeekRankClient = () => {
 
   const { data, isLoading, error } = useWeekRank(page, pageSize);
 
-  if (isLoading) {
+  if (isLoading || !data || data.length === 0) {
     return <div>Cargando...</div>;
   }
 

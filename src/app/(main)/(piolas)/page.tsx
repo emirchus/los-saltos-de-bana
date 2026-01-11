@@ -1,9 +1,9 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
-import { globalRankAction } from '@/app/(main)/piolas/actions/global-rank-action';
-import { weekRankAction } from '@/app/(main)/piolas/actions/week-rank-action';
-import { StarsView } from '@/app/(main)/piolas/components/stars-view';
-import { VideoBackground } from '@/app/(main)/piolas/components/video-background';
-import { PiolasPageClient } from '@/app/(main)/piolas/page.client';
+import { globalRankAction } from '@/app/(main)/(piolas)/actions/global-rank-action';
+import { weekRankAction } from '@/app/(main)/(piolas)/actions/week-rank-action';
+import { StarsView } from '@/app/(main)/(piolas)/components/stars-view';
+import { VideoBackground } from '@/app/(main)/(piolas)/components/video-background';
+import { PiolasPageClient } from '@/app/(main)/(piolas)/page.client';
 
 interface Props {
   searchParams: Promise<{
