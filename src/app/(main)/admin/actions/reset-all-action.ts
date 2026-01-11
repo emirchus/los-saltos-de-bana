@@ -12,6 +12,7 @@ export async function resetAllStats() {
       .update({
         points: 0,
         stars: 0,
+        messages_count: 0,
         updated_at: new Date().toISOString(),
       })
       .neq('user_id', ''); // Actualizar todos los registros

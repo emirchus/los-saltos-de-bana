@@ -61,7 +61,6 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
                 onChange={e => setSettings({ ...settings, base_points: Number(e.target.value) })}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="presente_points">Puntos por Presente</Label>
               <Input
@@ -71,7 +70,6 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
                 onChange={e => setSettings({ ...settings, presente_points: Number(e.target.value) })}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="presente_cooldown_minutes">Cooldown de Presente (minutos)</Label>
               <Input
@@ -81,7 +79,6 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
                 onChange={e => setSettings({ ...settings, presente_cooldown_minutes: Number(e.target.value) })}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="wall_bonus_points">Puntos Bonus del WallText</Label>
               <Input
@@ -91,7 +88,6 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
                 onChange={e => setSettings({ ...settings, wall_bonus_points: Number(e.target.value) })}
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="wall_min_chars">Mínimo de Caracteres del WallText</Label>
               <Input
@@ -101,7 +97,6 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
                 onChange={e => setSettings({ ...settings, wall_min_chars: Number(e.target.value) })}
               />
             </div>
-
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="presente_enabled">Presente Habilitado</Label>
@@ -113,7 +108,6 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
                 onCheckedChange={checked => setSettings({ ...settings, presente_enabled: checked })}
               />
             </div>
-
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="wall_boost_enabled">Boost del WallText Habilitado</Label>
@@ -125,7 +119,6 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
                 onCheckedChange={checked => setSettings({ ...settings, wall_boost_enabled: checked })}
               />
             </div>
-
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="allow_commands_offstream">Comandos Fuera de Stream</Label>
@@ -135,6 +128,17 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
                 id="allow_commands_offstream"
                 checked={settings.allow_commands_offstream}
                 onCheckedChange={checked => setSettings({ ...settings, allow_commands_offstream: checked })}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="enabled">Bot Activo</Label>
+                <p className="text-sm text-muted-foreground">Activar el bot en este canal</p>
+              </div>
+              <Switch
+                id="enabled"
+                checked={settings.enabled}
+                onCheckedChange={checked => setSettings({ ...settings, enabled: checked })}
               />
             </div>
           </div>
