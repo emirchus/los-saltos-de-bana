@@ -14,7 +14,7 @@ export default function LoadingPage() {
 
         {/* GTA Map skeleton */}
         <div className="w-3/4 animate-pulse">
-          <div className="aspect-square rounded-md bg-gray-300"></div>
+          <div className="aspect-square rounded-md bg-accent"></div>
         </div>
       </div>
     </div>
