@@ -1,13 +1,15 @@
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
 import { getChannelsSettings } from './actions/channels-settings-action';
 import { getUsers } from './actions/users-action';
 import { ChannelsSettingsForm } from './components/channels-settings-form';
 import { UsersTable } from './components/users-table';
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
 
 export default async function AdminPage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   // Verificar que el usuario esté autenticado
   if (!user) {
@@ -15,13 +17,10 @@ export default async function AdminPage() {
   }
 
   // Obtener datos
-  const [channelsSettings, users] = await Promise.all([
-    getChannelsSettings(),
-    getUsers({ page: 0, pageSize: 20 }),
-  ]);
+  const [channelsSettings, users] = await Promise.all([getChannelsSettings(), getUsers({ page: 0, pageSize: 20 })]);
 
   return (
-    <div className="container mx-auto p-6 space-y-6 overflow-y-auto h-full">
+    <div className="w-full p-6 space-y-6 overflow-y-auto h-full">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Panel de Administración</h1>
         <p className="text-muted-foreground">

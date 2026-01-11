@@ -1,5 +1,6 @@
 'use client';
 import { GalleryVerticalEnd, Minus, Plus } from 'lucide-react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { NavUser } from '@/components/nav-user';
@@ -36,10 +37,6 @@ const data = {
           title: 'Saltos',
           url: '/saltos',
         },
-        {
-          title: 'Administrador',
-          url: '/admin',
-        },
       ],
     },
   ],
@@ -48,6 +45,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const { user } = useUser();
+  console.log(user);
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -77,7 +75,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.items.map(item => (
                           <SidebarMenuSubItem key={item.title}>
                             <SidebarMenuSubButton asChild isActive={pathname === item.url}>
-                              <a href={item.url}>{item.title}</a>
+                              <Link href={item.url}>{item.title}</Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}
@@ -89,6 +87,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             ))}
           </SidebarMenu>
         </SidebarGroup>
+        {user?.user_metadata.role === 'admin' && (
+          <SidebarGroup>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href="/admin">Administrador</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} />
