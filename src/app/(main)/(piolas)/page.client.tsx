@@ -4,8 +4,14 @@ import Image from 'next/image';
 import { Suspense, useState } from 'react';
 import { GlobalRankClient } from '@/app/(main)/(piolas)/components/global-rank-client';
 import { WeekRankClient } from '@/app/(main)/(piolas)/components/week-rank-client';
+import { Database } from '@/types_db';
 
-export function PiolasPageClient() {
+interface PiolasPageClientProps {
+  initialWeekRank: Database['public']['Tables']['user_stats_session']['Row'][];
+  initialGlobalRank: Database['public']['Tables']['user_stats']['Row'][];
+}
+
+export function PiolasPageClient({ initialWeekRank, initialGlobalRank }: PiolasPageClientProps) {
   const [activeTab, setActiveTab] = useState<'semanal' | 'global'>('semanal');
 
   return (
@@ -72,7 +78,11 @@ export function PiolasPageClient() {
       </motion.div>
       <Suspense fallback={<div>Cargando...</div>}>
         <AnimatePresence mode="wait">
-          {activeTab === 'semanal' ? <WeekRankClient /> : <GlobalRankClient />}
+          {activeTab === 'semanal' ? (
+            <WeekRankClient initialData={initialWeekRank} />
+          ) : (
+            <GlobalRankClient initialData={initialGlobalRank} />
+          )}
         </AnimatePresence>
       </Suspense>
     </div>

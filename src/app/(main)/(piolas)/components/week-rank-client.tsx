@@ -4,15 +4,23 @@ import { Crown } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useSearchParams } from 'next/navigation';
 import { useWeekRank } from '@/app/(main)/(piolas)/hooks/use-week-rank';
+import { Database } from '@/types_db';
 
-export const WeekRankClient = () => {
+interface WeekRankClientProps {
+  initialData: Database['public']['Tables']['user_stats_session']['Row'][];
+}
+
+export const WeekRankClient = ({ initialData }: WeekRankClientProps) => {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get('page')) || 0;
   const pageSize = Number(searchParams.get('pageSize')) || 100;
 
   const { data, isLoading, error } = useWeekRank(page, pageSize);
 
-  if (isLoading || !data || data.length === 0) {
+  // Usar datos iniciales del cache si están disponibles, sino usar React Query
+  const finalData = data && data.length > 0 ? data : initialData;
+
+  if (isLoading && (!finalData || finalData.length === 0)) {
     return <div>Cargando...</div>;
   }
 
@@ -20,8 +28,12 @@ export const WeekRankClient = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  const top3 = data.slice(0, 3);
-  const restOfPlayers = data.slice(3);
+  if (!finalData || finalData.length === 0) {
+    return <div>No hay datos disponibles</div>;
+  }
+
+  const top3 = finalData.slice(0, 3);
+  const restOfPlayers = finalData.slice(3);
 
   const podiumOrder = [top3[1], top3[0], top3[2]];
   const podiumPositions = [2, 1, 3];

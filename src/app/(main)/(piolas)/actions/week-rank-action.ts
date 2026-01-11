@@ -2,7 +2,8 @@
 
 import 'server-only';
 
-import { createClient } from '@/lib/supabase/server';
+import { cacheLife, cacheTag } from 'next/cache';
+import { createPublicClient } from '@/lib/supabase/server';
 import { getWeek } from '@/lib/utils';
 import { Database } from '@/types_db';
 
@@ -12,9 +13,12 @@ interface Props {
 }
 
 export const weekRankAction = async ({ page, pageSize }: Props): Promise<Database['public']['Tables']['user_stats_session']['Row'][]> => {
-  const supabase = await createClient();
-  const { start, end } = getWeek();
+  'use cache';
+  cacheTag('week-rank', `week-rank-page-${page}`);
+  cacheLife('minutes'); // Cache por 1 minuto (configuración por defecto)
 
+  const supabase = createPublicClient();
+  const { start, end } = getWeek();
 
   const { data, error } = await supabase.from('user_stats_session').select('*, stream_sessions(*)')
     .lte('stream_sessions.started_at', end.toISOString())
