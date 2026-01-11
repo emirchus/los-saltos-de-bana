@@ -1,4 +1,6 @@
+'use client';
 import { GalleryVerticalEnd, Minus, Plus } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Logo } from '@/components/team-switcher';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -24,9 +26,8 @@ const data = {
       url: '#',
       items: [
         {
-          title: 'Piolas',
+          title: 'Los Piola',
           url: '/',
-          isActive: true,
         },
         {
           title: 'Saltos',
@@ -38,6 +39,7 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -66,7 +68,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       <SidebarMenuSub>
                         {item.items.map(item => (
                           <SidebarMenuSubItem key={item.title}>
-                            <SidebarMenuSubButton asChild isActive={item.isActive}>
+                            <SidebarMenuSubButton asChild isActive={pathname === item.url}>
                               <a href={item.url}>{item.title}</a>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
