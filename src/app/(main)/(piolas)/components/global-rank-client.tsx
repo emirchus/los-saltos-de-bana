@@ -109,7 +109,11 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
                   style={{
                     // Randomize color
                     backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
-                    boxShadow: `0 0 40px hsl(${Math.random() * 360}, 70%, 50%)80, 0 0 80px hsl(${Math.random() * 360}, 70%, 50%)40`,
+                    boxShadow: `0 0 40px hsl(${Math.random() * 360}, 70%, 50%) 80, 0 0 80px hsl(${Math.random() * 360}, 70%, 50%)40`,
+                    backgroundImage: `url(/api/image?username=${player.username})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
                   }}
                   whileHover={{ rotate: [0, -10, 10, 0] }}
                   transition={{ duration: 0.5 }}
@@ -219,6 +223,10 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
                 className="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold text-white shadow-lg border-2 border-white/20"
                 style={{
                   backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                  backgroundImage: `url(/api/image?username=${player.username})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
                 }}
                 whileHover={{
                   scale: 1.3,
