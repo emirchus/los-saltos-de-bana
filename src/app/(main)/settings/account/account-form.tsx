@@ -2,12 +2,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase/client';
 import { useUser } from '@/provider/user-provider';
 
@@ -43,8 +42,7 @@ export function AccountForm() {
   });
 
   async function onSubmit(data: AccountFormValues) {
-    toast({
-      title: 'Mandaste estos valores:',
+    toast.info('Mandaste estos valores:', {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
@@ -61,9 +59,7 @@ export function AccountForm() {
       },
     });
 
-    toast({
-      title: 'Tu cuenta se actualizó con éxito.',
-    });
+    toast.success('Tu cuenta se actualizó con éxito.');
   }
 
   return (

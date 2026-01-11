@@ -3,12 +3,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTheme } from 'next-themes';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
-
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { toast } from '@/hooks/use-toast';
 
 const appearanceFormSchema = z.object({
   theme: z.enum(['light', 'dark'], {
@@ -31,8 +30,7 @@ export function AppearanceForm() {
   function onSubmit(data: AppearanceFormValues) {
     setResolvedTheme(data.theme);
 
-    toast({
-      title: 'Configuración actualizada',
+    toast.success('Configuración actualizada', {
       description: 'Se actualizó la configuración correctamente.',
     });
   }
