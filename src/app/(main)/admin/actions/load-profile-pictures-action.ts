@@ -10,6 +10,9 @@ interface KickChannelResponse {
   };
 }
 
+
+const timeToSleep = 60 * 1000; // 1min
+
 const BATCH_SIZE = 10;
 
 export const loadProfilePicturesAction = async () => {
@@ -61,9 +64,9 @@ export const loadProfilePicturesAction = async () => {
 
         console.log(response);
 
-        // if (!response.ok) {
-        //   throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        // }
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
 
         const data: KickChannelResponse = await response.json();
 
@@ -78,6 +81,7 @@ export const loadProfilePicturesAction = async () => {
           .from('user_stats')
           .update({ profile_pic: data.user.profile_pic })
           .eq('user_id', user.user_id);
+
 
         if (updateError) {
           throw new Error(`Error actualizando BD: ${updateError.message}`);
@@ -104,7 +108,7 @@ export const loadProfilePicturesAction = async () => {
 
     // Pequeña pausa entre batches para no saturar la API
     if (i + BATCH_SIZE < users.length) {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, timeToSleep / 2));
     }
   }
 

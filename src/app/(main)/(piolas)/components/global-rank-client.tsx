@@ -2,8 +2,10 @@
 
 import { Crown, Star } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useGlobalRank } from '@/app/(main)/(piolas)/hooks/use-global-rank';
+import { Badge } from '@/components/ui/badge';
 import { Database } from '@/types_db';
 
 interface GlobalRankClientProps {
@@ -15,7 +17,7 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
   const page = Number(searchParams.get('page')) || 0;
   const pageSize = Number(searchParams.get('pageSize')) || 100;
 
-  const { data, isLoading, error } = useGlobalRank(page, pageSize);
+  const { data, isLoading, error } = useGlobalRank(page, pageSize, { initialData });
 
   // Usar datos iniciales del cache si están disponibles, sino usar React Query
   const finalData = data && data.length > 0 ? data : initialData;
@@ -103,52 +105,51 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
                     </motion.div>
                   )}
                 </AnimatePresence>
-
                 <motion.div
                   className="relative w-28 h-28 rounded-full flex items-center justify-center text-5xl font-black shadow-2xl border-4 border-white/30"
                   style={{
                     // Randomize color
                     backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
-                    boxShadow: `0 0 40px hsl(${Math.random() * 360}, 70%, 50%) 80, 0 0 80px hsl(${Math.random() * 360}, 70%, 50%)40`,
-                    backgroundImage: `url(/api/image?username=${player.username})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat',
+                    boxShadow: `0 0 40px hsl(${Math.random() * 360}, 70%, 50%)80, 0 0 80px hsl(${Math.random() * 360}, 70%, 50%)40`,
                   }}
                   whileHover={{ rotate: [0, -10, 10, 0] }}
                   transition={{ duration: 0.5 }}
                 >
-                  <motion.div
-                    className="absolute inset-0 rounded-full bg-white/20"
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      opacity: [0.5, 0, 0.5],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Number.POSITIVE_INFINITY,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                  <span className="relative z-10 text-white drop-shadow-lg">{player.username.charAt(0)}</span>
-                </motion.div>
+                  <span className="relative z-10 text-white drop-shadow-lg">
+                    <span>{player.username.charAt(0)}</span>
+                  </span>{' '}
+                  {player.profile_pic && (
+                    <Image
+                      src={`/api/image?username=${player.username}`}
+                      alt={''}
+                      width={48}
+                      height={48}
+                      className="rounded-full absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    />
+                  )}
+                </motion.div>{' '}
               </motion.div>
 
-              <motion.p
-                className="text-xl font-black mb-2 text-amber-400 text-center drop-shadow-[0_0_10px_rgba(251,191,36,0.5)]"
+              <motion.div
+                className="text-xl font-black mb-2 text-amber-400 text-center drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] flex items-center justify-center gap-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 + index * 0.15 }}
               >
-                {player.username}
-              </motion.p>
+                <p>{player.username}</p>
+                {player.is_og && (
+                  <Badge variant="outline">
+                    <Image src={`/og-badge.png`} alt={''} width={23} height={23} />
+                  </Badge>
+                )}
+              </motion.div>
               <motion.p
                 className="text-base text-zinc-300 mb-6 font-bold"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9 + index * 0.15 }}
               >
-                {player.stars} <span className="text-xs text-zinc-400">Estrellas</span>
+                {player.points} <span className="text-xs text-zinc-400">PTS</span>
               </motion.p>
 
               <motion.div
@@ -220,10 +221,9 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
             <div className="text-zinc-500 font-bold text-lg">#{index + 4}</div>
             <div className="flex items-center gap-4">
               <motion.div
-                className="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold text-white shadow-lg border-2 border-white/20"
+                className="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold text-white shadow-lg border-2 border-white/20 relative overflow-hidden"
                 style={{
                   backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
-                  backgroundImage: `url(/api/image?username=${player.username})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'no-repeat',
@@ -236,10 +236,22 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
                 transition={{ duration: 0.5, type: 'spring' }}
               >
                 {player.username.charAt(0)}
+                <Image
+                  src={`/api/image?username=${player.username}`}
+                  alt={''}
+                  width={48}
+                  height={48}
+                  className="rounded-full absolute inset-0"
+                />
               </motion.div>
-              <span className="font-bold text-white text-lg group-hover:text-amber-300 transition-colors">
-                {player.username}
-              </span>
+              <div className="font-bold text-white text-lg group-hover:text-amber-300 transition-colors flex items-center justify-center gap-2">
+                <span>{player.username}</span>{' '}
+                {player.is_og && (
+                  <Badge variant="outline">
+                    <Image src={`/og-badge.png`} alt={''} width={23} height={23} />
+                  </Badge>
+                )}
+              </div>
             </div>
             <motion.div
               className="text-right font-black text-2xl"

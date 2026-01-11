@@ -95,6 +95,7 @@ export type Database = {
           allow_commands_offstream: boolean
           base_points: number
           channel: string
+          enabled: boolean
           presente_cooldown_minutes: number
           presente_enabled: boolean
           presente_points: number
@@ -107,6 +108,7 @@ export type Database = {
           allow_commands_offstream?: boolean
           base_points?: number
           channel: string
+          enabled?: boolean
           presente_cooldown_minutes?: number
           presente_enabled?: boolean
           presente_points?: number
@@ -119,6 +121,7 @@ export type Database = {
           allow_commands_offstream?: boolean
           base_points?: number
           channel?: string
+          enabled?: boolean
           presente_cooldown_minutes?: number
           presente_enabled?: boolean
           presente_points?: number
@@ -442,6 +445,7 @@ export type Database = {
       user_stats: {
         Row: {
           channel: string
+          is_og: boolean
           messages_count: number
           points: number
           profile_pic: string | null
@@ -453,6 +457,7 @@ export type Database = {
         }
         Insert: {
           channel: string
+          is_og?: boolean
           messages_count?: number
           points?: number
           profile_pic?: string | null
@@ -464,6 +469,7 @@ export type Database = {
         }
         Update: {
           channel?: string
+          is_og?: boolean
           messages_count?: number
           points?: number
           profile_pic?: string | null

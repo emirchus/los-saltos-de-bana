@@ -7,11 +7,11 @@ import { WeekRankClient } from '@/app/(main)/(piolas)/components/week-rank-clien
 import { Database } from '@/types_db';
 
 interface PiolasPageClientProps {
-  initialWeekRank: Database['public']['Tables']['user_stats_session']['Row'][];
+  initialPointsRank: Database['public']['Tables']['user_stats']['Row'][];
   initialGlobalRank: Database['public']['Tables']['user_stats']['Row'][];
 }
 
-export function PiolasPageClient({ initialWeekRank, initialGlobalRank }: PiolasPageClientProps) {
+export function PiolasPageClient({ initialPointsRank, initialGlobalRank }: PiolasPageClientProps) {
   const [activeTab, setActiveTab] = useState<'semanal' | 'global'>('semanal');
 
   return (
@@ -79,7 +79,7 @@ export function PiolasPageClient({ initialWeekRank, initialGlobalRank }: PiolasP
       <Suspense fallback={<div>Cargando...</div>}>
         <AnimatePresence mode="wait">
           {activeTab === 'semanal' ? (
-            <WeekRankClient initialData={initialWeekRank} />
+            <WeekRankClient initialData={initialPointsRank} />
           ) : (
             <GlobalRankClient initialData={initialGlobalRank} />
           )}
