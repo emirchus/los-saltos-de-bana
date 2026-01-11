@@ -1,14 +1,17 @@
 'use client';
 
-import { ChevronLeft, ChevronRight, Loader2, Search, X } from 'lucide-react';
+import { format } from 'date-fns';
+import { ChevronLeft, ChevronRight, Loader2, Radio, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/hooks/use-debounce';
-import type { getUsers, UserStats } from '../actions/users-action';
+import { getActiveSession } from '../actions/session-action';
+import type { getUsers, UserWithSession } from '../actions/users-action';
 import { updateUserStats } from '../actions/users-action';
 
 interface UsersTableProps {
@@ -24,9 +27,14 @@ export function UsersTable({ initialUsers, channel }: UsersTableProps) {
   const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [editingKey, setEditingKey] = useState<string | null>(null);
-  const [editedUser, setEditedUser] = useState<{ points: number; stars: number } | null>(null);
+  const [editingGlobalKey, setEditingGlobalKey] = useState<string | null>(null);
+  const [editingSessionKey, setEditingSessionKey] = useState<string | null>(null);
+  const [editedGlobal, setEditedGlobal] = useState<{ points: number; stars: number } | null>(null);
+  const [editedSession, setEditedSession] = useState<{ points: number } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [activeSessions, setActiveSessions] = useState<
+    Record<string, { id: string; is_live: boolean; started_at: string } | null>
+  >({});
 
   // Debounce para la búsqueda (500ms de delay)
   const debouncedSearch = useDebounce(searchQuery, 500);
@@ -56,6 +64,27 @@ export function UsersTable({ initialUsers, channel }: UsersTableProps) {
         });
         setUsers(result.users);
         setTotal(result.total);
+
+        // Cargar sesiones activas para cada canal único
+        const uniqueChannels = [...new Set(result.users.map(u => u.channel))];
+        const sessionsMap: Record<string, { id: string; is_live: boolean; started_at: string } | null> = {};
+
+        await Promise.all(
+          uniqueChannels.map(async ch => {
+            const session = await getActiveSession(ch);
+            if (session) {
+              sessionsMap[ch] = {
+                id: session.id,
+                is_live: session.is_live,
+                started_at: session.started_at,
+              };
+            } else {
+              sessionsMap[ch] = null;
+            }
+          })
+        );
+
+        setActiveSessions(sessionsMap);
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'Error al cargar usuarios');
       } finally {
@@ -68,28 +97,86 @@ export function UsersTable({ initialUsers, channel }: UsersTableProps) {
 
   const getEditKey = (userId: string, userChannel: string) => `${userId}-${userChannel}`;
 
-  const handleEdit = (user: UserStats) => {
-    setEditingKey(getEditKey(user.user_id, user.channel));
-    setEditedUser({ points: user.points, stars: user.stars });
+  const handleEditGlobal = (user: UserWithSession) => {
+    setEditingGlobalKey(getEditKey(user.user_id, user.channel));
+    setEditedGlobal({ points: user.points, stars: user.stars });
   };
 
-  const handleCancel = () => {
-    setEditingKey(null);
-    setEditedUser(null);
+  const handleEditSession = (user: UserWithSession) => {
+    setEditingSessionKey(getEditKey(user.user_id, user.channel));
+    setEditedSession({
+      points: user.sessionStats?.points || 0,
+    });
   };
 
-  const handleSave = async (userId: string, userChannel: string) => {
-    if (!editedUser) return;
+  const handleCancelGlobal = () => {
+    setEditingGlobalKey(null);
+    setEditedGlobal(null);
+  };
+
+  const handleCancelSession = () => {
+    setEditingSessionKey(null);
+    setEditedSession(null);
+  };
+
+  const handleSaveGlobal = async (userId: string, userChannel: string) => {
+    if (!editedGlobal) return;
 
     setIsSaving(true);
     try {
-      const updated = await updateUserStats(userId, userChannel, editedUser);
-      setUsers(users.map(u => (u.user_id === userId && u.channel === userChannel ? updated : u)));
-      setEditingKey(null);
-      setEditedUser(null);
-      toast.success('Usuario actualizado correctamente');
+      const updated = await updateUserStats(userId, userChannel, editedGlobal, 'global');
+      setUsers(users.map(u => (u.user_id === userId && u.channel === userChannel ? { ...u, ...updated } : u)));
+      setEditingGlobalKey(null);
+      setEditedGlobal(null);
+      toast.success('Puntos/estrellas globales actualizados correctamente');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Error al actualizar el usuario');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveSession = async (userId: string, userChannel: string) => {
+    if (!editedSession) return;
+
+    setIsSaving(true);
+    try {
+      await updateUserStats(userId, userChannel, { points: editedSession.points }, 'session');
+      // Recargar usuarios para obtener los datos actualizados de sesión
+      const { getUsers } = await import('../actions/users-action');
+      const result = await getUsers({
+        channel,
+        search: debouncedSearch.trim() || undefined,
+        page,
+        pageSize: PAGE_SIZE,
+      });
+      setUsers(result.users);
+
+      // Recargar también las sesiones activas
+      const uniqueChannels = [...new Set(result.users.map(u => u.channel))];
+      const sessionsMap: Record<string, { id: string; is_live: boolean; started_at: string } | null> = {};
+
+      await Promise.all(
+        uniqueChannels.map(async ch => {
+          const session = await getActiveSession(ch);
+          if (session) {
+            sessionsMap[ch] = {
+              id: session.id,
+              is_live: session.is_live,
+              started_at: session.started_at,
+            };
+          } else {
+            sessionsMap[ch] = null;
+          }
+        })
+      );
+
+      setActiveSessions(sessionsMap);
+      setEditingSessionKey(null);
+      setEditedSession(null);
+      toast.success('Puntos de sesión actualizados correctamente (también se actualizaron los puntos globales)');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Error al actualizar la sesión');
     } finally {
       setIsSaving(false);
     }
@@ -160,17 +247,22 @@ export function UsersTable({ initialUsers, channel }: UsersTableProps) {
                   <tr className="border-b">
                     <th className="p-2 text-left text-sm font-medium">Usuario</th>
                     <th className="p-2 text-left text-sm font-medium">Canal</th>
-                    <th className="p-2 text-left text-sm font-medium">Puntos</th>
-                    <th className="p-2 text-left text-sm font-medium">Estrellas</th>
+                    <th className="p-2 text-left text-sm font-medium">Puntos Global</th>
+                    <th className="p-2 text-left text-sm font-medium">Estrellas Global</th>
+                    <th className="p-2 text-left text-sm font-medium">Puntos Sesión</th>
+                    <th className="p-2 text-left text-sm font-medium">Sesión Activa</th>
                     <th className="p-2 text-left text-sm font-medium">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {users.map(user => {
                     const editKey = getEditKey(user.user_id, user.channel);
-                    const isEditing = editingKey === editKey;
-                    const currentPoints = isEditing && editedUser ? editedUser.points : user.points;
-                    const currentStars = isEditing && editedUser ? editedUser.stars : user.stars;
+                    const isEditingGlobal = editingGlobalKey === editKey;
+                    const isEditingSession = editingSessionKey === editKey;
+                    const currentGlobalPoints = isEditingGlobal && editedGlobal ? editedGlobal.points : user.points;
+                    const currentGlobalStars = isEditingGlobal && editedGlobal ? editedGlobal.stars : user.stars;
+                    const currentSessionPoints =
+                      isEditingSession && editedSession ? editedSession.points : (user.sessionStats?.points ?? 0);
 
                     return (
                       <tr key={`${user.user_id}-${user.channel}`} className="border-b hover:bg-muted/50">
@@ -185,13 +277,13 @@ export function UsersTable({ initialUsers, channel }: UsersTableProps) {
                         </td>
                         <td className="p-2 text-sm text-muted-foreground">{user.channel}</td>
                         <td className="p-2">
-                          {isEditing ? (
+                          {isEditingGlobal ? (
                             <Input
                               type="number"
-                              value={currentPoints}
+                              value={currentGlobalPoints}
                               onChange={e =>
-                                setEditedUser({
-                                  ...editedUser!,
+                                setEditedGlobal({
+                                  ...editedGlobal!,
                                   points: Number(e.target.value),
                                 })
                               }
@@ -202,13 +294,13 @@ export function UsersTable({ initialUsers, channel }: UsersTableProps) {
                           )}
                         </td>
                         <td className="p-2">
-                          {isEditing ? (
+                          {isEditingGlobal ? (
                             <Input
                               type="number"
-                              value={currentStars}
+                              value={currentGlobalStars}
                               onChange={e =>
-                                setEditedUser({
-                                  ...editedUser!,
+                                setEditedGlobal({
+                                  ...editedGlobal!,
                                   stars: Number(e.target.value),
                                 })
                               }
@@ -219,24 +311,84 @@ export function UsersTable({ initialUsers, channel }: UsersTableProps) {
                           )}
                         </td>
                         <td className="p-2">
-                          {isEditing ? (
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                onClick={() => handleSave(user.user_id, user.channel)}
-                                disabled={isSaving}
+                          {isEditingSession ? (
+                            <Input
+                              type="number"
+                              value={currentSessionPoints}
+                              onChange={e =>
+                                setEditedSession({
+                                  ...editedSession!,
+                                  points: Number(e.target.value),
+                                })
+                              }
+                              className="w-24"
+                            />
+                          ) : (
+                            <span>{user.sessionStats?.points ?? '-'}</span>
+                          )}
+                        </td>
+                        <td className="p-2">
+                          {activeSessions[user.channel] ? (
+                            <div className="flex flex-col gap-1">
+                              <Badge
+                                variant={activeSessions[user.channel]?.is_live ? 'default' : 'secondary'}
+                                className="w-fit flex items-center gap-1"
                               >
-                                {isSaving ? 'Guardando...' : 'Guardar'}
-                              </Button>
-                              <Button size="sm" variant="outline" onClick={handleCancel}>
-                                Cancelar
-                              </Button>
+                                <Radio className="h-3 w-3" />
+                                {activeSessions[user.channel]?.is_live ? 'En vivo' : 'Última sesión'}
+                              </Badge>
+                              <span className="text-xs text-muted-foreground">
+                                {format(new Date(activeSessions[user.channel]!.started_at), 'dd/MM/yyyy HH:mm')}
+                              </span>
                             </div>
                           ) : (
-                            <Button size="sm" variant="outline" onClick={() => handleEdit(user)}>
-                              Editar
-                            </Button>
+                            <span className="text-xs text-muted-foreground">Sin sesión</span>
                           )}
+                        </td>
+                        <td className="p-2">
+                          <div className="flex flex-col gap-2">
+                            {isEditingGlobal ? (
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleSaveGlobal(user.user_id, user.channel)}
+                                  disabled={isSaving}
+                                >
+                                  {isSaving ? 'Guardando...' : 'Guardar Global'}
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={handleCancelGlobal}>
+                                  Cancelar
+                                </Button>
+                              </div>
+                            ) : (
+                              <Button size="sm" variant="outline" onClick={() => handleEditGlobal(user)}>
+                                Editar Global
+                              </Button>
+                            )}
+                            {isEditingSession ? (
+                              <div className="flex gap-2">
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleSaveSession(user.user_id, user.channel)}
+                                  disabled={isSaving}
+                                >
+                                  {isSaving ? 'Guardando...' : 'Guardar Sesión'}
+                                </Button>
+                                <Button size="sm" variant="outline" onClick={handleCancelSession}>
+                                  Cancelar
+                                </Button>
+                              </div>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleEditSession(user)}
+                                disabled={!user.sessionStats}
+                              >
+                                Editar Sesión
+                              </Button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );

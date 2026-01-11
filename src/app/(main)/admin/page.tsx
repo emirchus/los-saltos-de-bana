@@ -5,6 +5,7 @@ import { getChannelsSettings } from './actions/channels-settings-action';
 import { getUsers } from './actions/users-action';
 import { ChannelsSettingsForm } from './components/channels-settings-form';
 import { UsersTable } from './components/users-table';
+import { ResetAllButton } from './components/reset-all-button';
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -23,10 +24,15 @@ export default async function AdminPage() {
   return (
     <div className="w-full p-6 space-y-6 overflow-y-auto h-full">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Panel de Administración</h1>
-        <p className="text-muted-foreground">
-          Gestiona la configuración de canales y los puntos/estrellas de los usuarios
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Panel de Administración</h1>
+            <p className="text-muted-foreground">
+              Gestiona la configuración de canales y los puntos/estrellas de los usuarios
+            </p>
+          </div>
+          <ResetAllButton />
+        </div>
       </div>
 
       <div className="space-y-6">
