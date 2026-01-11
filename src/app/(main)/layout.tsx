@@ -1,12 +1,11 @@
+import type { User } from '@supabase/supabase-js';
 import { AppSidebar } from '@/components/app-sidebar';
-import { SidebarLayout, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import type { Profile } from '@/interface/profile';
 import { fetchUserInfo } from '@/lib/supabase/query';
 import { createClient } from '@/lib/supabase/server';
 import { ErrorProvider } from '@/provider/errors-provider';
 import { UserProvider } from '@/provider/user-provider';
-
-import type { Profile } from '@/interface/profile';
-import type { User } from '@supabase/supabase-js';
 
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -25,15 +24,12 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   return (
     <ErrorProvider>
       <UserProvider defaultUser={defaultUser} defaultProfile={defaultProfile}>
-        <SidebarLayout defaultOpen={true}>
-          <AppSidebar />
-          <main className="flex flex-1 flex-col transition-all duration-300 ease-in-out">
-            <div className="relative m-2 min-h-screen rounded-md border-2 border-dashed p-2">
-              <SidebarTrigger className="sticky left-0 top-0" />
-              {children}
-            </div>
-          </main>
-        </SidebarLayout>
+        <SidebarProvider>
+          <AppSidebar variant="inset" />
+          <SidebarInset className="m-2 h-[calc(100vh-1rem)] rounded-md border-2 border-dashed p-0 flex flex-col w-screen overflow-hidden bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,var(--secondary),var(--background))]">
+            {children}
+          </SidebarInset>
+        </SidebarProvider>
       </UserProvider>
     </ErrorProvider>
   );

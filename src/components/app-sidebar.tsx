@@ -1,99 +1,87 @@
-'use client';
-
-import { ArrowRight, Compass, Dices, Map, PlusSquareIcon, Send, Twitter } from 'lucide-react';
-
-import { NavMain } from '@/components/nav-main';
-import { NavProjects } from '@/components/nav-projects';
-import { NavSecondary } from '@/components/nav-secondary';
-import { NavUser } from '@/components/nav-user';
-import { JumpNotFound } from '@/components/storage-card';
+import { GalleryVerticalEnd, Minus, Plus } from 'lucide-react';
+import * as React from 'react';
 import { Logo } from '@/components/team-switcher';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
+  SidebarGroup,
   SidebarHeader,
-  SidebarItem,
-  SidebarLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarRail,
 } from '@/components/ui/sidebar';
-import { useUser } from '@/provider/user-provider';
 
+// This is sample data.
 const data = {
   navMain: [
     {
-      title: 'Mapa',
-      url: '/',
-      icon: Map,
-    },
-    {
-      title: 'Bingo',
-      url: '/bingo',
-      icon: Dices,
+      title: 'Secciones',
+      url: '#',
+      isActive: true,
       items: [
         {
-          title: 'Crear sala',
-          url: '/bingo?o=0',
-          icon: PlusSquareIcon,
-          description: 'Crea una sala de bingo para jugar con tus amigos.',
+          title: 'Saltos',
+          url: '/',
+          isActive: true,
         },
         {
-          title: 'Unirse a sala',
-          url: '/bingo?o=1',
-          icon: ArrowRight,
-          description: 'Unite a una sala de bingo existente.',
-        },
-        {
-          title: 'Explorar salas',
-          url: '/bingo/explore',
-          icon: Compass,
-          description: 'Explora salas de bingo disponibles para jugar.',
+          title: 'Piolas',
+          url: '/piolas',
         },
       ],
     },
   ],
-
-  navSecondary: [
-    {
-      title: 'Twitter',
-      url: 'https://x.com/emirchus',
-      icon: Twitter,
-    },
-    {
-      title: 'Colaborar',
-      url: 'https://github.com/emirchus/los-saltos-de-bana',
-      icon: Send,
-    },
-  ],
 };
 
-export function AppSidebar() {
-  const { user, profile } = useUser();
-
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar>
+    <Sidebar {...props}>
       <SidebarHeader>
-        <Logo />
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton size="lg" asChild>
+              <Logo />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarItem>
-          <SidebarLabel>Saltos</SidebarLabel>
-          <NavProjects projects={[]} isSub={profile?.sub ?? false} />
-        </SidebarItem>
-        <SidebarItem>
-          <SidebarLabel>Páginas</SidebarLabel>
-          <NavMain items={data.navMain} />
-        </SidebarItem>
-        <SidebarItem className="mt-auto">
-          <SidebarLabel>Equipo</SidebarLabel>
-          <NavSecondary items={data.navSecondary} />
-        </SidebarItem>
-        <SidebarItem>
-          <JumpNotFound />
-        </SidebarItem>
+        <SidebarGroup>
+          <SidebarMenu>
+            {data.navMain.map((item, index) => (
+              <Collapsible key={item.title} defaultOpen={index === 0} className="group/collapsible">
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton>
+                      {item.title} <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
+                      <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  {item.items?.length ? (
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {item.items.map(item => (
+                          <SidebarMenuSubItem key={item.title}>
+                            <SidebarMenuSubButton asChild isActive={item.isActive}>
+                              <a href={item.url}>{item.title}</a>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  ) : null}
+                </SidebarMenuItem>
+              </Collapsible>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={user} />
-      </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

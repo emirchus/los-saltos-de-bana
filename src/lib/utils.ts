@@ -1,8 +1,8 @@
+import type { ClassValue } from 'clsx';
 import { clsx } from 'clsx';
+import { endOfWeek, startOfWeek } from 'date-fns';
 import { redirect } from 'next/navigation';
 import { twMerge } from 'tailwind-merge';
-
-import type { ClassValue } from 'clsx';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -17,4 +17,14 @@ export function cn(...inputs: ClassValue[]) {
  */
 export function encodedRedirect(type: 'error' | 'success', path: string, message: string): never {
   return redirect(`${path}?${type}=${encodeURIComponent(message)}`);
+}
+
+export function getWeek() {
+  const now = new Date();
+  const start = startOfWeek(now);
+  const end = endOfWeek(now);
+  return {
+    start,
+    end,
+  };
 }

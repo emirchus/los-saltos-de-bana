@@ -1,8 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
 :root {
+  --color-1: 0 100% 63%;
+  --color-2: 270 100% 63%;
+  --color-3: 210 100% 63%;
+  --color-4: 195 100% 63%;
+  --color-5: 90 100% 63%;
+
   --background: oklch(1.0000 0 0);
   --foreground: oklch(0.0984 0.0124 174.8359);
   --card: oklch(1.0000 0 0);
@@ -27,32 +45,32 @@
   --chart-3: oklch(0.7681 0.0305 64.0100);
   --chart-4: oklch(0.8556 0.0221 76.5109);
   --chart-5: oklch(0.9362 0.0137 78.2611);
-  --sidebar: oklch(0.9393 0.0137 78.2613);
-  --sidebar-foreground: oklch(0.2972 0 0);
+  --sidebar: oklch(0.8450 0.1430 164.9780);
+  --sidebar-foreground: oklch(0.1450 0 0);
   --sidebar-primary: oklch(0.2972 0 0);
-  --sidebar-primary-foreground: oklch(0.9882 0.0069 88.6415);
-  --sidebar-accent: oklch(0.8716 0.0237 75.8382);
-  --sidebar-accent-foreground: oklch(0.2972 0 0);
-  --sidebar-border: oklch(0.8104 0.0213 81.7716);
-  --sidebar-ring: oklch(0.6729 0.0167 77.0203);
-  --font-sans: Alan Sans, ui-sans-serif, sans-serif, system-ui;
-  --font-serif: Asul, ui-serif, serif;
-  --font-mono: "Indie Flower", cursive;
+  --sidebar-primary-foreground: oklch(0.9790 0.0210 166.1130);
+  --sidebar-accent: oklch(0.9050 0.0930 164.1500);
+  --sidebar-accent-foreground: oklch(0.1450 0 0);
+  --sidebar-border: oklch(0.2620 0.0510 172.5520);
+  --sidebar-ring: oklch(0.7650 0.1770 163.2230);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --radius: 0.5rem;
-  --shadow-x: 0px;
-  --shadow-y: 2px;
+  --shadow-x: 0;
+  --shadow-y: 1px;
   --shadow-blur: 4px;
   --shadow-spread: 0px;
   --shadow-opacity: 0.1;
-  --shadow-color: #6C6C6C;
-  --shadow-2xs: 0px 2px 4px 0px hsl(0 0% 42.3529% / 0.05);
-  --shadow-xs: 0px 2px 4px 0px hsl(0 0% 42.3529% / 0.05);
-  --shadow-sm: 0px 2px 4px 0px hsl(0 0% 42.3529% / 0.10), 0px 1px 2px -1px hsl(0 0% 42.3529% / 0.10);
-  --shadow: 0px 2px 4px 0px hsl(0 0% 42.3529% / 0.10), 0px 1px 2px -1px hsl(0 0% 42.3529% / 0.10);
-  --shadow-md: 0px 2px 4px 0px hsl(0 0% 42.3529% / 0.10), 0px 2px 4px -1px hsl(0 0% 42.3529% / 0.10);
-  --shadow-lg: 0px 2px 4px 0px hsl(0 0% 42.3529% / 0.10), 0px 4px 6px -1px hsl(0 0% 42.3529% / 0.10);
-  --shadow-xl: 0px 2px 4px 0px hsl(0 0% 42.3529% / 0.10), 0px 8px 10px -1px hsl(0 0% 42.3529% / 0.10);
-  --shadow-2xl: 0px 2px 4px 0px hsl(0 0% 42.3529% / 0.25);
+  --shadow-color: #6c6c6c;
+  --shadow-2xs: 0 1px 4px 0px hsl(0 0% 42.3529% / 0.05);
+  --shadow-xs: 0 1px 4px 0px hsl(0 0% 42.3529% / 0.05);
+  --shadow-sm: 0 1px 4px 0px hsl(0 0% 42.3529% / 0.10), 0 1px 2px -1px hsl(0 0% 42.3529% / 0.10);
+  --shadow: 0 1px 4px 0px hsl(0 0% 42.3529% / 0.10), 0 1px 2px -1px hsl(0 0% 42.3529% / 0.10);
+  --shadow-md: 0 1px 4px 0px hsl(0 0% 42.3529% / 0.10), 0 2px 4px -1px hsl(0 0% 42.3529% / 0.10);
+  --shadow-lg: 0 1px 4px 0px hsl(0 0% 42.3529% / 0.10), 0 4px 6px -1px hsl(0 0% 42.3529% / 0.10);
+  --shadow-xl: 0 1px 4px 0px hsl(0 0% 42.3529% / 0.10), 0 8px 10px -1px hsl(0 0% 42.3529% / 0.10);
+  --shadow-2xl: 0 1px 4px 0px hsl(0 0% 42.3529% / 0.25);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
@@ -82,32 +100,32 @@
   --chart-3: oklch(0.7681 0.0305 64.0100);
   --chart-4: oklch(0.5286 0.0305 54.1604);
   --chart-5: oklch(0.6529 0.0365 65.6593);
-  --sidebar: oklch(0.3798 0.0171 52.9493);
+  --sidebar: oklch(0.2620 0.0510 172.5520);
   --sidebar-foreground: oklch(0.9549 0.0076 61.4515);
   --sidebar-primary: oklch(0.9549 0.0076 61.4515);
-  --sidebar-primary-foreground: oklch(0.3327 0.0165 55.7476);
-  --sidebar-accent: oklch(0.4942 0.0209 59.1424);
+  --sidebar-primary-foreground: oklch(0.5960 0.1450 163.2250);
+  --sidebar-accent: oklch(0.3780 0.0770 168.9400);
   --sidebar-accent-foreground: oklch(0.9549 0.0076 61.4515);
-  --sidebar-border: oklch(0.6074 0.0219 64.9360);
-  --sidebar-ring: oklch(0.7263 0.0190 59.3735);
+  --sidebar-border: oklch(0.7650 0.1770 163.2230);
+  --sidebar-ring: oklch(0.9050 0.0930 164.1500);
   --font-sans: Alan Sans, ui-sans-serif, sans-serif, system-ui;
   --font-serif: Asul, ui-serif, serif;
   --font-mono: "Indie Flower", cursive;
   --radius: 0.5rem;
-  --shadow-x: 0px;
-  --shadow-y: 2px;
+  --shadow-x: 0;
+  --shadow-y: 1px;
   --shadow-blur: 4px;
   --shadow-spread: 0px;
   --shadow-opacity: 0.1;
-  --shadow-color: #2D2D2D;
-  --shadow-2xs: 0px 2px 4px 0px hsl(0 0% 17.6471% / 0.05);
-  --shadow-xs: 0px 2px 4px 0px hsl(0 0% 17.6471% / 0.05);
-  --shadow-sm: 0px 2px 4px 0px hsl(0 0% 17.6471% / 0.10), 0px 1px 2px -1px hsl(0 0% 17.6471% / 0.10);
-  --shadow: 0px 2px 4px 0px hsl(0 0% 17.6471% / 0.10), 0px 1px 2px -1px hsl(0 0% 17.6471% / 0.10);
-  --shadow-md: 0px 2px 4px 0px hsl(0 0% 17.6471% / 0.10), 0px 2px 4px -1px hsl(0 0% 17.6471% / 0.10);
-  --shadow-lg: 0px 2px 4px 0px hsl(0 0% 17.6471% / 0.10), 0px 4px 6px -1px hsl(0 0% 17.6471% / 0.10);
-  --shadow-xl: 0px 2px 4px 0px hsl(0 0% 17.6471% / 0.10), 0px 8px 10px -1px hsl(0 0% 17.6471% / 0.10);
-  --shadow-2xl: 0px 2px 4px 0px hsl(0 0% 17.6471% / 0.25);
+  --shadow-color: #2d2d2d;
+  --shadow-2xs: 0 1px 4px 0px hsl(0 0% 17.6471% / 0.05);
+  --shadow-xs: 0 1px 4px 0px hsl(0 0% 17.6471% / 0.05);
+  --shadow-sm: 0 1px 4px 0px hsl(0 0% 17.6471% / 0.10), 0 1px 2px -1px hsl(0 0% 17.6471% / 0.10);
+  --shadow: 0 1px 4px 0px hsl(0 0% 17.6471% / 0.10), 0 1px 2px -1px hsl(0 0% 17.6471% / 0.10);
+  --shadow-md: 0 1px 4px 0px hsl(0 0% 17.6471% / 0.10), 0 2px 4px -1px hsl(0 0% 17.6471% / 0.10);
+  --shadow-lg: 0 1px 4px 0px hsl(0 0% 17.6471% / 0.10), 0 4px 6px -1px hsl(0 0% 17.6471% / 0.10);
+  --shadow-xl: 0 1px 4px 0px hsl(0 0% 17.6471% / 0.10), 0 8px 10px -1px hsl(0 0% 17.6471% / 0.10);
+  --shadow-2xl: 0 1px 4px 0px hsl(0 0% 17.6471% / 0.25);
 }
 
 @theme inline {
@@ -147,7 +165,6 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
-
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -161,13 +178,203 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
-}
 
+  --header-height: 4rem;
+
+  --font-pricedown-bl: var(--font-pricedown-bl);
+
+  --animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+
+  @keyframes rainbow {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 200%;
+    }
+  }
+
+  --animate-float-background: floatBackground 20s ease-in-out infinite;
+
+  @keyframes floatBackground {
+    0% {
+        transform: translateZ(0) scale(1.1)
+    }
+
+    25% {
+        transform: translate3d(-10px,10px,0) scale(1.1)
+    }
+
+    50% {
+        transform: translate3d(0,-10px,0) scale(1.1)
+    }
+
+    75% {
+        transform: translate3d(10px,10px,0) scale(1.1)
+    }
+
+    to {
+        transform: translateZ(0) scale(1.1)
+    }
+}
+}
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
   body {
-    @apply min-h-screen overflow-x-hidden bg-background font-sans antialiased;
+    @apply min-h-screen overflow-x-hidden bg-background text-foreground font-sans antialiased;
   }
+}
+
+
+
+.splash-screen {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  z-index: 100;
+  transition: all .8s cubic-bezier(.4,0,.2,1);
+  padding: 2rem;
+  min-height: 100vh;
+  height: 100%;
+  width: 100vw;
+  background-color: #000;
+  overflow: hidden;
+  will-change: opacity,transform
+}
+
+.splash-screen:before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: 2px solid transparent;
+  background: linear-gradient(to right,#00ff8000,#00ff8033,#00ff8000);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 101;
+  transition: all .3s ease
+}
+
+.splash-screen:after {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-shadow: inset 0 0 100px #00ff8026,inset 0 0 60px #00ff801a,inset 0 0 30px #00ff800d;
+  pointer-events: none;
+  z-index: 101;
+  transition: all .3s ease
+}
+
+.splash-background {
+  position: fixed;
+  top: -50px;
+  right: -50px;
+  bottom: -50px;
+  left: -50px;
+  background-image: url('/bana-fat.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  z-index: -2;
+  will-change: transform;
+  animation: floatBackground 20s ease-in-out infinite;
+  transform: translateZ(0)
+}
+
+.splash-background:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  box-shadow: inset 0 0 100px #00ff8026,inset 0 0 60px #00ff801a,inset 0 0 30px #00ff800d;
+  transition: all .3s ease
+}
+
+.splash-screen:has(.confirm-button:hover) .splash-background:before {
+  box-shadow: inset 0 0 150px #00ff804d,inset 0 0 100px #00ff8033,inset 0 0 50px #00ff801a
+}
+
+.splash-screen .confirm-button {
+  position: relative;
+  max-width: min(300px,50vw);
+  cursor: pointer;
+  margin-top: -2rem;
+  padding: 1rem 2rem;
+  background: #000000d2;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: .75rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px #0003,inset 0 1px 1px #ffffff1a,0 0 80px #00ff8066,0 0 160px #00ff8033;
+  will-change: transform,box-shadow;
+  z-index: 102;
+  transform: scale(1);
+  transition: transform .3s cubic-bezier(.4,0,.2,1),box-shadow .3s cubic-bezier(.4,0,.2,1),background-color .3s cubic-bezier(.4,0,.2,1)
+}
+
+.splash-screen .confirm-button:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 15px #0000004d,inset 0 1px 1px #ffffff26,0 0 60px #00ff8099,0 0 100px #00ff8033;
+  background: #0006
+}
+
+.splash-screen .confirm-button:active {
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px #0003,inset 0 1px 1px #ffffff0d,0 0 40px #00ff8066
+}
+
+.splash-screen:has(.confirm-button:hover) .overlay:before {
+  opacity: 1;
+  transform: scale(1.1)
+}
+
+.splash-screen .overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: radial-gradient(circle at center,#00000059,#00000073 70%,#0009);
+  z-index: 65;
+  width: 100vw;
+  height: 100vh
+}
+.splash-screen .overlay:before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  bottom: -10px;
+  left: -10px;
+  background: radial-gradient(circle at center,rgba(0,255,128,.1) 0%,rgba(0,255,128,.05) 50%,transparent 70%);
+  opacity: 0;
+  transition: all .3s ease;
+  transform: scale(.95);
+  pointer-events: none
+}
+
+.text-border-shadow {
+  text-shadow:
+    4px 4px 0px #000000,
+    -4px -4px 0px #000000,
+    4px -4px 0px #000000,
+    -4px 4px 0px #000000;
 }

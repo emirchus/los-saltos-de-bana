@@ -64,7 +64,7 @@ export const JoinRoomButton = () => {
           <h2 className="max-w-80 text-balance text-left text-base font-semibold tracking-[-0.015em] text-white md:text-xl lg:text-3xl">
             Unirse a una sala
           </h2>
-          <p className="mt-4 max-w-[26rem] text-left text-base/6 text-neutral-200">
+          <p className="mt-4 max-w-104 text-left text-base/6 text-neutral-200">
             Unite a una sala con el código que de sala!
           </p>
         </WobbleCard>
