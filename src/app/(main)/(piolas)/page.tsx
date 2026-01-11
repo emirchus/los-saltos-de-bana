@@ -30,7 +30,7 @@ export default async function PiolasPage({ searchParams }: Props) {
 
   return (
     <div className="w-full h-full relative overflow-auto overflow-x-hidden">
-      <VideoBackground />
+      <VideoBackground videoUrl="https://kuynskxmgfjuveklharx.supabase.co/storage/v1/object/public/videos/Video%20Project.mp4" />
       <StarsView />
       <SiteHeader title="" />
       <Suspense fallback={<div className="container mx-auto px-4 py-12 max-w-6xl relative z-10">Cargando...</div>}>
