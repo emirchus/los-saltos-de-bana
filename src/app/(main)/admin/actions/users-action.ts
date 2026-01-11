@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import type { Database } from '@/types_db';
 
@@ -10,14 +11,12 @@ export interface GetUsersResult {
   total: number;
 }
 
-export async function getUsers(
-  options?: {
-    channel?: string;
-    search?: string;
-    page?: number;
-    pageSize?: number;
-  }
-): Promise<GetUsersResult> {
+export async function getUsers(options?: {
+  channel?: string;
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<GetUsersResult> {
   const supabase = await createClient();
   const { channel, search, page = 0, pageSize = 20 } = options || {};
 
@@ -50,9 +49,7 @@ export async function getUsers(
 
   if (search) {
     const searchPattern = `%${search}%`;
-    query = query.or(
-      `username.ilike.${searchPattern},user_id.ilike.${searchPattern},channel.ilike.${searchPattern}`
-    );
+    query = query.or(`username.ilike.${searchPattern},user_id.ilike.${searchPattern},channel.ilike.${searchPattern}`);
   }
 
   const { data, error } = await query;
@@ -90,6 +87,11 @@ export async function updateUserStats(
     console.error('Error actualizando user_stats:', error);
     throw new Error(error.message);
   }
+
+  // force revalidate cache
+  revalidateTag('global-rank', 'global-rank-page-0');
+  revalidateTag('week-rank', 'week-rank-page-0');
+  revalidateTag('points-rank', 'points-rank-page-0');
 
   return data;
 }
