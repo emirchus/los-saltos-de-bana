@@ -4,6 +4,7 @@ import { weekRankAction } from '@/app/(main)/(piolas)/actions/week-rank-action';
 import { StarsView } from '@/app/(main)/(piolas)/components/stars-view';
 import { VideoBackground } from '@/app/(main)/(piolas)/components/video-background';
 import { PiolasPageClient } from '@/app/(main)/(piolas)/page.client';
+import { SiteHeader } from '@/components/site-header';
 
 interface Props {
   searchParams: Promise<{
@@ -31,6 +32,7 @@ export default async function PiolasPage({ searchParams }: Props) {
     <div className="w-full h-full relative overflow-auto overflow-x-hidden">
       <VideoBackground />
       <StarsView />
+      <SiteHeader title="" />
       <Suspense fallback={<div className="container mx-auto px-4 py-12 max-w-6xl relative z-10">Cargando...</div>}>
         <PiolasPageClient initialWeekRank={weekRankData} initialGlobalRank={globalRankData} />
       </Suspense>
