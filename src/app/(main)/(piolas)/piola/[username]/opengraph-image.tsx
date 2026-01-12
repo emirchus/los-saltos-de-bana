@@ -10,16 +10,7 @@ export const size = {
 export const contentType = 'image/png';
 
 // Image generation
-export default async function Image({ params }: { params: { slug: string } }) {
-  const profile = await getUserProfile(params.slug);
-  if (!profile) {
-    return new ImageResponse(
-      <div>
-        <h1>Perfil no encontrado</h1>
-      </div>
-    );
-  }
-
+export default async function Image({ params }: { params: { username: string } }) {
   return new ImageResponse(
     // ImageResponse JSX element
     <div
@@ -38,9 +29,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
         backgroundPosition: 'center',
       }}
     >
-      <div style={{ display: 'flex', color: 'white', marginLeft: '50px', fontSize: 50 }}>
-        {profile.userStats[0].username}
-      </div>
+      <div style={{ display: 'flex', color: 'white', marginLeft: '50px', fontSize: 50 }}>{params.username}</div>
     </div>
   );
 }
