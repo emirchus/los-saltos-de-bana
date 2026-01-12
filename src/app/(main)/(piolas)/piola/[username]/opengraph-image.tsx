@@ -38,7 +38,9 @@ export default async function Image({ params }: { params: { slug: string } }) {
         backgroundPosition: 'center',
       }}
     >
-      <h1 style={{ color: 'white', marginLeft: '50px' }}>{`${profile.userStats[0].username}`}</h1>
+      <div style={{ display: 'flex', color: 'white', marginLeft: '50px', fontSize: 50 }}>
+        {profile.userStats[0].username}
+      </div>
     </div>
   );
 }
