@@ -10,7 +10,17 @@ export const size = {
 export const contentType = 'image/png';
 
 // Image generation
-export default async function Image({ params }: { params: { username: string } }) {
+export default async function Image({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = await params;
+  console.log('username', username);
+  const profile = await getUserProfile(username);
+  if (!profile) {
+    return new ImageResponse(
+      <div>
+        <h1>Perfil no encontrado</h1>
+      </div>
+    );
+  }
   return new ImageResponse(
     // ImageResponse JSX element
     <div
@@ -29,7 +39,7 @@ export default async function Image({ params }: { params: { username: string } }
         backgroundPosition: 'center',
       }}
     >
-      <div style={{ display: 'flex', color: 'white', marginLeft: '50px', fontSize: 50 }}>{params.username}</div>
+      <div style={{ display: 'flex', color: 'white', marginLeft: '50px', fontSize: 50 }}>{username}</div>
     </div>
   );
 }
