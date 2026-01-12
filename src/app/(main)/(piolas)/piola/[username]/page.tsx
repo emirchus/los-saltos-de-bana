@@ -12,6 +12,22 @@ interface Props {
   }>;
 }
 
+export const generateMetadata = async ({ params }: Props) => {
+  const { username } = await params;
+  const profile = await getUserProfile(username);
+
+  if (!profile) {
+    return {
+      title: 'Perfil no encontrado',
+      description: 'Perfil no encontrado en Los Piola de Bana',
+    };
+  }
+
+  return {
+    title: `Perfil de ${username}`,
+  };
+};
+
 export default async function ProfilePage({ params }: Props) {
   const { username } = await params;
   const profile = await getUserProfile(username);
