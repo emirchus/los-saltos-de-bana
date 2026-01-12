@@ -149,7 +149,7 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9 + index * 0.15 }}
               >
-                {player.points} <span className="text-xs text-zinc-400">PTS</span>
+                {player.stars} <span className="text-xs text-zinc-400">⭐</span>
               </motion.p>
 
               <motion.div
