@@ -12,7 +12,6 @@ export async function resetAllStats() {
       .update({
         points: 0,
         stars: 0,
-        messages_count: 0,
         updated_at: new Date().toISOString(),
       })
       .neq('user_id', ''); // Actualizar todos los registros
@@ -24,7 +23,7 @@ export async function resetAllStats() {
 
     // Resetear todos los puntos en user_stats_session
     const { error: sessionError } = await supabase
-      .from('user_stats_session').delete()
+      .from('user_stats_session').delete().neq('user_id', '');
 
     if (sessionError) {
       console.error('Error reseteando user_stats_session:', sessionError);
