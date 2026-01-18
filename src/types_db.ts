@@ -61,6 +61,48 @@ export type Database = {
           },
         ]
       }
+      cart: {
+        Row: {
+          created_at: string
+          id: number
+          product_id: number
+          quantity: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          product_id: number
+          quantity?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          product_id?: number
+          quantity?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       channels: {
         Row: {
           created_by: string
@@ -436,7 +478,6 @@ export type Database = {
           price_ars: number | null
           price_points: number | null
           price_star: number | null
-          product_id: number | null
           updated_at: string
         }
         Insert: {
@@ -445,7 +486,6 @@ export type Database = {
           price_ars?: number | null
           price_points?: number | null
           price_star?: number | null
-          product_id?: number | null
           updated_at?: string
         }
         Update: {
@@ -454,18 +494,9 @@ export type Database = {
           price_ars?: number | null
           price_points?: number | null
           price_star?: number | null
-          product_id?: number | null
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "product_price_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "product"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {

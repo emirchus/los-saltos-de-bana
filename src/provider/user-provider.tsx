@@ -1,13 +1,11 @@
 'use client';
 
+import type { User } from '@supabase/supabase-js';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
 import { SignInAlert } from '@/components/sign-in-alert';
 import { Profile } from '@/interface/profile';
 import { supabase } from '@/lib/supabase/client';
 import { fetchUserInfo } from '@/lib/supabase/query';
-
-import type { User } from '@supabase/supabase-js';
 
 type UserContextType = {
   user: User | null;

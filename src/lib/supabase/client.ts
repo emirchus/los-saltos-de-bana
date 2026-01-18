@@ -2,8 +2,8 @@ import { createBrowserClient } from '@supabase/ssr';
 
 import 'react';
 
-import type { Database } from '@/types_db';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/types_db';
 
 export type SupabaseClientTyped = SupabaseClient<Database>;
 
