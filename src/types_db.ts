@@ -388,6 +388,85 @@ export type Database = {
           },
         ]
       }
+      product: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: number
+          image: string | null
+          name: string
+          price_id: number | null
+          quantity: number | null
+          update_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          image?: string | null
+          name: string
+          price_id?: number | null
+          quantity?: number | null
+          update_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          image?: string | null
+          name?: string
+          price_id?: number | null
+          quantity?: number | null
+          update_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_price_id_fkey"
+            columns: ["price_id"]
+            isOneToOne: false
+            referencedRelation: "product_price"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_price: {
+        Row: {
+          created_at: string
+          id: number
+          price_ars: number | null
+          price_points: number | null
+          price_star: number | null
+          product_id: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          price_ars?: number | null
+          price_points?: number | null
+          price_star?: number | null
+          product_id?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          price_ars?: number | null
+          price_points?: number | null
+          price_star?: number | null
+          product_id?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_price_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
