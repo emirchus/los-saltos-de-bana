@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
+import { getFirstProfiles } from '@/app/(main)/(piolas)/actions/get-first-profies';
 import { getUserProfile } from '@/app/(main)/(piolas)/actions/profile-action';
 import { ProfileView } from '@/app/(main)/(piolas)/components/profile-view';
 import { StarsView } from '@/app/(main)/(piolas)/components/stars-view';
@@ -10,6 +11,14 @@ interface Props {
   params: Promise<{
     username: string;
   }>;
+}
+
+export async function generateStaticParams() {
+  const usernames = await getFirstProfiles();
+
+  return usernames.map(username => ({
+    username: username,
+  }));
 }
 
 export const generateMetadata = async ({ params }: Props) => {
@@ -41,7 +50,8 @@ export default async function ProfilePage({ params }: Props) {
         videoUrl={'https://kuynskxmgfjuveklharx.supabase.co/storage/v1/object/public/videos/Video%20Project%201.mp4'}
       />
       <StarsView />
-      <SiteHeader title="" />
+      <SiteHeader title={`Perfil de ${username}`} />
+
       <Suspense
         fallback={<div className="container mx-auto px-4 py-12 max-w-6xl relative z-10">Cargando perfil...</div>}
       >

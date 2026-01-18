@@ -71,7 +71,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
         </motion.div>
 
         {/* Contenido principal */}
-        <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-[45%_55%] gap-4 lg:gap-4">
           {/* Sección izquierda: Imagen */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -185,7 +185,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex items-center justify-center gap-3 bg-primary text-primary-foreground font-bold text-lg py-4 px-8 rounded-xl hover:bg-primary/90 transition-colors"
+              className="flex items-center justify-center gap-3 bg-primary text-primary-foreground font-bold text-lg py-4 px-8 rounded-xl hover:bg-primary/90 transition-colors w-full md:w-[70%]"
               onClick={handleAddToCart}
             >
               <ShoppingCart className="w-6 h-6" />
