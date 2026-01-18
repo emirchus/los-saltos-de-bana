@@ -21,8 +21,6 @@ export default async function PiolasPage({ searchParams }: Props) {
   const pageNum = Number(params.page) || DEFAULT_PAGE;
   const pageSizeNum = Number(params.pageSize) || PAGE_SIZE;
 
-  // Prefetch de datos usando cache (se incluyen en el static shell cuando es posible)
-  // Cada combinación de page/pageSize tiene su propia entrada de cache
   const [pointsRankData, globalRankData] = await Promise.all([
     pointsRankAction({ page: pageNum, pageSize: pageSizeNum }),
     globalRankAction({ page: pageNum, pageSize: pageSizeNum }),

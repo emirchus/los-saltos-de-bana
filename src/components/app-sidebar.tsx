@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { NavUser } from '@/components/nav-user';
 import { Logo } from '@/components/team-switcher';
+import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
@@ -23,7 +24,17 @@ import {
 import { useUser } from '@/provider/user-provider';
 
 // This is sample data.
-const data = {
+const data: {
+  navMain: {
+    title: string;
+    url: string;
+    items: {
+      title: string;
+      url: string;
+      isNew?: boolean;
+    }[];
+  }[];
+} = {
   navMain: [
     {
       title: 'Secciones',
@@ -32,6 +43,11 @@ const data = {
         {
           title: 'Los Piola',
           url: '/',
+        },
+        {
+          title: 'Tienda',
+          url: '/store',
+          isNew: true,
         },
         {
           title: 'Saltos',
@@ -74,7 +90,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         {item.items.map(item => (
                           <SidebarMenuSubItem key={item.title}>
                             <SidebarMenuSubButton asChild isActive={pathname === item.url}>
-                              <Link href={item.url}>{item.title}</Link>
+                              <Link href={item.url}>
+                                {item.title} {item.isNew && <Badge>Nuevo</Badge>}
+                              </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ))}
@@ -89,11 +107,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {user?.user_metadata.role === 'admin' && (
           <SidebarGroup>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Link href="/admin">Administrador</Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <Collapsible defaultOpen={true} className="group/collapsible">
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton>
+                      Administrador <Plus className="ml-auto group-data-[state=open]/collapsible:hidden" />
+                      <Minus className="ml-auto group-data-[state=closed]/collapsible:hidden" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={pathname === '/admin'}>
+                          <Link href="/admin">Panel del Canal</Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={pathname === '/admin/store'}>
+                          <Link href="/admin/store">Panel de la Tienda</Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem className="opacity-50 pointer-events-none">
+                        <SidebarMenuSubButton asChild isActive={pathname === '/admin/users'}>
+                          <Link href="/admin/users">Panel de Usuarios</Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
             </SidebarMenu>
           </SidebarGroup>
         )}
