@@ -97,6 +97,27 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
                 onChange={e => setSettings({ ...settings, wall_min_chars: Number(e.target.value) })}
               />
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="wall_racha_timeout">Racha de walltext para timeout</Label>
+              <Input
+                id="wall_racha_timeout"
+                type="number"
+                value={settings.max_walltext_timeout}
+                onChange={e => setSettings({ ...settings, max_walltext_timeout: Number(e.target.value) })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="wall_timeout">Tmeout por exceso de walltext (min)</Label>
+              <Input
+                id="wall_timeout"
+                type="number"
+                value={settings.timeout_walltext}
+                onChange={e => setSettings({ ...settings, timeout_walltext: Number(e.target.value) })}
+              />
+            </div>
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="presente_enabled">Presente Habilitado</Label>
