@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  cacheLife: {
+    products: {
+      stale: 60,
+      revalidate: 60,
+      expire: 60,
+    },
+  },
   experimental: {
     viewTransition: true,
     optimizePackageImports: ["@/components/ui/"],

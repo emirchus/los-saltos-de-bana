@@ -42,6 +42,8 @@ export async function getProducts(options?: {
     query = query.limit(options.limit);
   }
 
+  query = query.eq("archived", false);
+
   const { data, error } = await query;
 
   if (error) {
@@ -111,6 +113,7 @@ export async function searchProducts(query: string): Promise<ProductWithPrice[]>
       *,
       product_price (*)
     `)
+    .eq("archived", false)
     .or(`name.ilike.${searchTerm},description.ilike.${searchTerm}`)
     .order('created_at', { ascending: false });
 

@@ -432,30 +432,36 @@ export type Database = {
       }
       product: {
         Row: {
+          archived: boolean
           created_at: string
           description: string | null
           id: number
           image: string | null
+          low_stock_threshold: number | null
           name: string
           price_id: number | null
           quantity: number | null
           update_at: string
         }
         Insert: {
+          archived?: boolean
           created_at?: string
           description?: string | null
           id?: number
           image?: string | null
+          low_stock_threshold?: number | null
           name: string
           price_id?: number | null
           quantity?: number | null
           update_at?: string
         }
         Update: {
+          archived?: boolean
           created_at?: string
           description?: string | null
           id?: number
           image?: string | null
+          low_stock_threshold?: number | null
           name?: string
           price_id?: number | null
           quantity?: number | null
@@ -477,7 +483,9 @@ export type Database = {
           id: number
           price_ars: number | null
           price_points: number | null
+          price_promo_ars: number | null
           price_star: number | null
+          price_wholesale_ars: number | null
           updated_at: string
         }
         Insert: {
@@ -485,7 +493,9 @@ export type Database = {
           id?: number
           price_ars?: number | null
           price_points?: number | null
+          price_promo_ars?: number | null
           price_star?: number | null
+          price_wholesale_ars?: number | null
           updated_at?: string
         }
         Update: {
@@ -493,10 +503,59 @@ export type Database = {
           id?: number
           price_ars?: number | null
           price_points?: number | null
+          price_promo_ars?: number | null
           price_star?: number | null
+          price_wholesale_ars?: number | null
           updated_at?: string
         }
         Relationships: []
+      }
+      product_variant: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: number
+          low_stock_threshold: number | null
+          product_id: number
+          size: string | null
+          sku: string
+          stock: number
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: number
+          low_stock_threshold?: number | null
+          product_id: number
+          size?: string | null
+          sku: string
+          stock?: number
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: number
+          low_stock_threshold?: number | null
+          product_id?: number
+          size?: string | null
+          sku?: string
+          stock?: number
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variant_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
