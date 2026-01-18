@@ -109,10 +109,11 @@ export function ChannelsSettingsForm({ settings: initialSettings }: ChannelsSett
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="wall_timeout">Tmeout por exceso de walltext (min)</Label>
+              <Label htmlFor="wall_timeout">Tmeout por exceso de walltext en minutos (min: 1min)</Label>
               <Input
                 id="wall_timeout"
                 type="number"
+                min={1}
                 value={settings.timeout_walltext}
                 onChange={e => setSettings({ ...settings, timeout_walltext: Number(e.target.value) })}
               />
