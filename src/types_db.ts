@@ -96,9 +96,11 @@ export type Database = {
           base_points: number
           channel: string
           enabled: boolean
+          max_walltext_timeout: number
           presente_cooldown_minutes: number
           presente_enabled: boolean
           presente_points: number
+          timeout_walltext: number
           updated_at: string
           wall_bonus_points: number
           wall_boost_enabled: boolean
@@ -109,9 +111,11 @@ export type Database = {
           base_points?: number
           channel: string
           enabled?: boolean
+          max_walltext_timeout?: number
           presente_cooldown_minutes?: number
           presente_enabled?: boolean
           presente_points?: number
+          timeout_walltext?: number
           updated_at?: string
           wall_bonus_points?: number
           wall_boost_enabled?: boolean
@@ -122,9 +126,11 @@ export type Database = {
           base_points?: number
           channel?: string
           enabled?: boolean
+          max_walltext_timeout?: number
           presente_cooldown_minutes?: number
           presente_enabled?: boolean
           presente_points?: number
+          timeout_walltext?: number
           updated_at?: string
           wall_bonus_points?: number
           wall_boost_enabled?: boolean
