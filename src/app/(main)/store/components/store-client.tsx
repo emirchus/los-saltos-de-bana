@@ -11,7 +11,7 @@ import { ProductGrid } from './product-grid';
 import { SearchBar } from './search-bar';
 
 export function StoreClient() {
-  const favorites = useFavoritesStore(state => state.favorites);
+  // const favorites = useFavoritesStore(state => state.favorites);
   const isFavorite = useFavoritesStore(state => state.isFavorite);
 
   // Usar nuqs para manejar los searchParams

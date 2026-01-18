@@ -10,7 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useCartStore } from '@/stores/cart.store';
-import { purchaseCart } from '../actions/cart-action';
+
+// import { purchaseCart } from '../actions/cart-action';
 
 interface CartSidebarProps {
   children?: React.ReactNode;
@@ -63,16 +64,16 @@ export function CartSidebar({ children }: CartSidebarProps) {
     setIsPurchasing(true);
     try {
       // Preparar los items del carrito para la compra
-      const cartItems = items.map(item => ({
-        productId: item.productId,
-        quantity: item.quantity,
-      }));
+      // const cartItems = items.map(item => ({
+      //   productId: item.productId,
+      //   quantity: item.quantity,
+      // }));
 
-      await purchaseCart(cartItems);
-      
+      // await purchaseCart(cartItems);
+
       // Limpiar el carrito después de la compra exitosa
       clearCart();
-      
+
       toast.success('Compra realizada exitosamente');
       setIsOpen(false);
     } catch (error) {
