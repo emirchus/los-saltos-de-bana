@@ -1,6 +1,5 @@
 'use client';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Minus, Plus, ShoppingCart, Trash2, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
@@ -10,71 +9,70 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { getCart, purchaseCart, removeFromCart, updateCartItem } from '../actions/cart-action';
+import { useCartStore } from '@/stores/cart.store';
+import { purchaseCart } from '../actions/cart-action';
 
 interface CartSidebarProps {
   children?: React.ReactNode;
 }
 
 export function CartSidebar({ children }: CartSidebarProps) {
-  const queryClient = useQueryClient();
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const { data: cart, isLoading } = useQuery({
-    queryKey: ['cart'],
-    queryFn: getCart,
-  });
+  const items = useCartStore(state => state.items);
+  const removeItem = useCartStore(state => state.removeItem);
+  const updateQuantity = useCartStore(state => state.updateQuantity);
+  const getItemCount = useCartStore(state => state.getItemCount);
+  const getTotalPoints = useCartStore(state => state.getTotalPoints);
+  const getTotalStars = useCartStore(state => state.getTotalStars);
+  const getTotalARS = useCartStore(state => state.getTotalARS);
 
-  const cartItems = cart || [];
-  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = getItemCount();
+  const totalPoints = getTotalPoints();
+  const totalStars = getTotalStars();
+  const totalARS = getTotalARS();
 
-  // Calcular totales
-  let totalPoints = 0;
-  let totalStars = 0;
-  let totalARS = 0;
-
-  cartItems.forEach(item => {
-    if (item.product?.product_price) {
-      const price = item.product.product_price;
-      totalPoints += (price.price_points || 0) * item.quantity;
-      totalStars += (price.price_star || 0) * item.quantity;
-      totalARS += (price.price_ars || 0) * item.quantity;
-    }
-  });
-
-  const handleUpdateQuantity = async (cartItemId: number, newQuantity: number) => {
+  const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
-      await handleRemoveItem(cartItemId);
+      handleRemoveItem(itemId);
       return;
     }
 
     try {
-      await updateCartItem(cartItemId, newQuantity);
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      updateQuantity(itemId, newQuantity);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Error al actualizar cantidad');
     }
   };
 
-  const handleRemoveItem = async (cartItemId: number) => {
+  const handleRemoveItem = (itemId: string) => {
     try {
-      await removeFromCart(cartItemId);
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      removeItem(itemId);
       toast.success('Producto eliminado del carrito');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Error al eliminar producto');
     }
   };
 
+  const clearCart = useCartStore(state => state.clearCart);
+
   const handlePurchase = async () => {
-    if (isPurchasing || cartItems.length === 0) return;
+    if (isPurchasing || items.length === 0) return;
 
     setIsPurchasing(true);
     try {
-      await purchaseCart();
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      // Preparar los items del carrito para la compra
+      const cartItems = items.map(item => ({
+        productId: item.productId,
+        quantity: item.quantity,
+      }));
+
+      await purchaseCart(cartItems);
+      
+      // Limpiar el carrito después de la compra exitosa
+      clearCart();
+      
       toast.success('Compra realizada exitosamente');
       setIsOpen(false);
     } catch (error) {
@@ -108,18 +106,7 @@ export function CartSidebar({ children }: CartSidebarProps) {
 
         <div className="flex-1 overflow-y-auto py-4">
           <AnimatePresence mode="sync">
-            {isLoading ? (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="flex items-center justify-center py-8"
-              >
-                <p className="text-muted-foreground">Cargando carrito...</p>
-              </motion.div>
-            ) : cartItems.length === 0 ? (
+            {items.length === 0 ? (
               <motion.div
                 key="empty"
                 initial={{ opacity: 0, y: 10 }}
@@ -141,10 +128,8 @@ export function CartSidebar({ children }: CartSidebarProps) {
                 className="space-y-4"
               >
                 <AnimatePresence mode="popLayout">
-                  {cartItems.map(item => {
+                  {items.map(item => {
                     const product = item.product;
-                    if (!product) return null;
-
                     const price = product.product_price;
 
                     return (
@@ -242,7 +227,7 @@ export function CartSidebar({ children }: CartSidebarProps) {
           </AnimatePresence>
         </div>
         {/* Footer con totales y botón de comprar */}
-        {cartItems.length > 0 && (
+        {items.length > 0 && (
           <div className="border-t pt-4">
             <div className="mb-4 space-y-2">
               {totalPoints > 0 && (

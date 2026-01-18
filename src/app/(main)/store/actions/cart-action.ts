@@ -246,7 +246,7 @@ export async function clearCart(): Promise<void> {
   revalidateTag('cart');
 }
 
-export async function purchaseCart(): Promise<{ success: boolean; message: string }> {
+export async function purchaseCart(cartItems: Array<{ productId: number; quantity: number }>): Promise<{ success: boolean; message: string }> {
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
@@ -255,12 +255,39 @@ export async function purchaseCart(): Promise<{ success: boolean; message: strin
     throw new Error('Usuario no autenticado');
   }
 
-  // Obtener el carrito con productos y precios
-  const cart = await getCart();
-
-  if (cart.length === 0) {
+  if (cartItems.length === 0) {
     throw new Error('El carrito está vacío');
   }
+
+  // Obtener información completa de los productos desde la base de datos
+  const productIds = cartItems.map(item => item.productId);
+  const { data: products, error: productsError } = await supabase
+    .from('product')
+    .select(`
+      *,
+      product_price (*)
+    `)
+    .in('id', productIds);
+
+  if (productsError) {
+    console.error('Error obteniendo productos:', productsError);
+    throw new Error(productsError.message);
+  }
+
+  if (!products || products.length === 0) {
+    throw new Error('No se encontraron los productos');
+  }
+
+  // Crear un mapa de productos para acceso rápido
+  const productsMap = new Map(
+    products.map(p => [
+      p.id,
+      {
+        ...p,
+        product_price: Array.isArray(p.product_price) ? p.product_price[0] || null : p.product_price || null,
+      },
+    ])
+  );
 
   // Calcular totales
   let totalPoints = 0;
@@ -268,20 +295,22 @@ export async function purchaseCart(): Promise<{ success: boolean; message: strin
   let totalARS = 0;
 
   // Verificar stock y calcular totales
-  for (const item of cart) {
-    if (!item.product || !item.product.product_price) {
-      throw new Error(`Producto ${item.product_id} no encontrado o sin precio`);
+  for (const cartItem of cartItems) {
+    const product = productsMap.get(cartItem.productId);
+    
+    if (!product || !product.product_price) {
+      throw new Error(`Producto ${cartItem.productId} no encontrado o sin precio`);
     }
 
     // Verificar stock
-    if (item.product.quantity !== null && item.product.quantity < item.quantity) {
-      throw new Error(`Stock insuficiente para ${item.product.name}`);
+    if (product.quantity !== null && product.quantity < cartItem.quantity) {
+      throw new Error(`Stock insuficiente para ${product.name}`);
     }
 
-    const price = item.product.product_price;
-    totalPoints += (price.price_points || 0) * item.quantity;
-    totalStars += (price.price_star || 0) * item.quantity;
-    totalARS += (price.price_ars || 0) * item.quantity;
+    const price = product.product_price;
+    totalPoints += (price.price_points || 0) * cartItem.quantity;
+    totalStars += (price.price_star || 0) * cartItem.quantity;
+    totalARS += (price.price_ars || 0) * cartItem.quantity;
   }
 
   // Obtener todas las estadísticas del usuario (puede tener múltiples canales)
@@ -342,20 +371,18 @@ export async function purchaseCart(): Promise<{ success: boolean; message: strin
   }
 
   // Actualizar stock de productos
-  for (const item of cart) {
-    if (item.product && item.product.quantity !== null) {
+  for (const cartItem of cartItems) {
+    const product = productsMap.get(cartItem.productId);
+    if (product && product.quantity !== null) {
       await supabase
         .from('product')
         .update({
-          quantity: item.product.quantity - item.quantity,
+          quantity: product.quantity - cartItem.quantity,
           update_at: new Date().toISOString(),
         })
-        .eq('id', item.product_id);
+        .eq('id', cartItem.productId);
     }
   }
-
-  // Limpiar el carrito
-  await clearCart();
 
   // Revalidar cachés
   revalidateTag('cart');

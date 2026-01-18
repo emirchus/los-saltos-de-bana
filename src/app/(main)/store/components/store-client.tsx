@@ -4,12 +4,16 @@ import { useQuery } from '@tanstack/react-query';
 import { motion } from 'motion/react';
 import { parseAsString, useQueryState } from 'nuqs';
 import { useMemo } from 'react';
+import { useFavoritesStore } from '@/stores/favorites.store';
 import { getProducts, searchProducts } from '../actions/products-action';
 import { FilterButtons, type FilterType } from './filter-buttons';
 import { ProductGrid } from './product-grid';
 import { SearchBar } from './search-bar';
 
 export function StoreClient() {
+  const favorites = useFavoritesStore(state => state.favorites);
+  const isFavorite = useFavoritesStore(state => state.isFavorite);
+
   // Usar nuqs para manejar los searchParams
   const [searchQuery, setSearchQuery] = useQueryState(
     'search',
@@ -63,27 +67,33 @@ export function StoreClient() {
 
   // Aplicar filtro adicional a los productos buscados
   const filteredProductsList = useMemo(() => {
+    let filtered = [...products];
+
+    // Aplicar filtro de favoritos
+    if (normalizedFilter === 'favorites') {
+      filtered = filtered.filter(product => isFavorite(product.id));
+    }
+
+    // Aplicar ordenamiento si hay búsqueda
     if (searchQuery) {
-      // Si hay búsqueda, aplicar filtro sobre los resultados
-      const sorted = [...products];
       switch (normalizedFilter) {
         case 'new':
-          sorted.sort((a, b) => {
+          filtered.sort((a, b) => {
             const dateA = new Date(a.created_at).getTime();
             const dateB = new Date(b.created_at).getTime();
             return dateB - dateA;
           });
           break;
         case 'popular':
-          sorted.sort((a, b) => b.id - a.id);
+          filtered.sort((a, b) => b.id - a.id);
           break;
         default:
           break;
       }
-      return sorted;
     }
-    return products;
-  }, [products, normalizedFilter, searchQuery]);
+
+    return filtered;
+  }, [products, normalizedFilter, searchQuery, isFavorite]);
 
   const isLoading = isSearching || isFiltering;
 

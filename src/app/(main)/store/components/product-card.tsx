@@ -1,16 +1,15 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
 import { Heart, ShoppingCart } from 'lucide-react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { addToCart } from '@/app/(main)/store/actions/cart-action';
-import { useFavorites } from '@/app/(main)/store/hooks/use-favorites';
 import { ProductWithPrice } from '@/interface/product';
 import { cn } from '@/lib/utils';
+import { useCartStore } from '@/stores/cart.store';
+import { useFavoritesStore } from '@/stores/favorites.store';
 
 interface ProductCardProps {
   product: ProductWithPrice;
@@ -18,19 +17,18 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, index }: ProductCardProps) {
-  const { isFavorite, toggleFavorite } = useFavorites();
+  const { isFavorite, toggleFavorite } = useFavoritesStore();
+  const addItem = useCartStore(state => state.addItem);
 
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const queryClient = useQueryClient();
   const favorite = isFavorite(product.id);
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (isAddingToCart) return;
 
     setIsAddingToCart(true);
     try {
-      await addToCart(product.id, 1);
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      addItem(product, 1);
       toast.success('Producto agregado al carrito');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Error al agregar al carrito');
@@ -66,7 +64,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
             alt={product.name}
             width={1500}
             height={1500}
-            className="object-contain relative z-10 group-hover:scale-105 transition-transform duration-300 rounded-md aspect-square"
+            className="object-cover relative z-10 group-hover:scale-105 transition-transform duration-300 rounded-md aspect-square"
             style={{
               viewTransitionName: `product-image-${product.id}`,
             }}
@@ -78,9 +76,18 @@ export function ProductCard({ product, index }: ProductCardProps) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="inline-block px-3 py-1 bg-primary text-primary-foreground text-sm font-bold rounded-md"
+              className="flex flex-row gap-4 items-center justify-center px-3 py-1 bg-primary text-primary-foreground text-sm font-bold rounded-md"
             >
-              {Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(price.price_ars || 0)}
+              {price.price_ars && (
+                <span>
+                  {Intl.NumberFormat('es-AR', {
+                    style: 'currency',
+                    currency: 'ARS',
+                  }).format(price.price_ars || 0)}
+                </span>
+              )}
+              {price.price_points && <span>PTS{Intl.NumberFormat('es-AR').format(price.price_points || 0)}</span>}
+              {price.price_star && <span>⭐{Intl.NumberFormat('es-AR').format(price.price_star || 0)}</span>}
             </motion.div>
           )}
           <p
@@ -96,8 +103,12 @@ export function ProductCard({ product, index }: ProductCardProps) {
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className="p-2 bg-secondary/80 backdrop-blur-sm rounded-lg text-foreground hover:text-primary transition-colors"
-            onClick={() => toggleFavorite(product.id)}
+            className="p-2 bg-secondary/80 backdrop-blur-sm rounded-lg text-foreground hover:text-primary transition-colors relative pointer-events-auto cursor-pointer"
+            onClick={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              toggleFavorite(product.id);
+            }}
           >
             <Heart
               className={cn('size-4', {
@@ -108,8 +119,12 @@ export function ProductCard({ product, index }: ProductCardProps) {
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            className="p-2 bg-secondary/80 backdrop-blur-sm rounded-lg text-foreground hover:text-primary transition-colors"
-            onClick={handleAddToCart}
+            className="p-2 bg-secondary/80 backdrop-blur-sm rounded-lg text-foreground hover:text-primary transition-colors relative pointer-events-auto cursor-pointer"
+            onClick={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleAddToCart();
+            }}
           >
             <ShoppingCart
               className={cn('size-4', {

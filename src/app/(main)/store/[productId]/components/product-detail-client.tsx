@@ -1,17 +1,16 @@
 'use client';
 
-import { useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Heart, Minus, Package, Plus, RotateCcw, Shield, ShoppingCart, Truck } from 'lucide-react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { addToCart } from '@/app/(main)/store/actions/cart-action';
-import { useFavorites } from '@/app/(main)/store/hooks/use-favorites';
 import { Button } from '@/components/ui/button';
 import { ProductWithPrice } from '@/interface/product';
 import { cn } from '@/lib/utils';
+import { useCartStore } from '@/stores/cart.store';
+import { useFavoritesStore } from '@/stores/favorites.store';
 
 interface ProductDetailClientProps {
   product: ProductWithPrice;
@@ -20,8 +19,8 @@ interface ProductDetailClientProps {
 export function ProductDetailClient({ product }: ProductDetailClientProps) {
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const { isFavorite, toggleFavorite } = useFavorites();
-  const queryClient = useQueryClient();
+  const { isFavorite, toggleFavorite } = useFavoritesStore();
+  const addItem = useCartStore(state => state.addItem);
 
   const favorite = isFavorite(product.id);
   const price = product.product_price;
@@ -40,13 +39,12 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
     }
   };
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (isAddingToCart || !hasStock) return;
 
     setIsAddingToCart(true);
     try {
-      await addToCart(product.id, quantity);
-      queryClient.invalidateQueries({ queryKey: ['cart'] });
+      addItem(product, quantity);
       toast.success('Producto agregado al carrito');
       setQuantity(1); // Resetear cantidad después de agregar
     } catch (error) {
@@ -87,7 +85,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
                 src={product.image || '/placeholder.svg'}
                 alt={product.name}
                 fill
-                className="object-contain p-8 group-hover:scale-105 transition-transform duration-500"
+                className="object-cover p-8 group-hover:scale-105 transition-transform duration-500 rounded-2xl corner-squircle"
                 style={{
                   viewTransitionName: `product-image-${product.id}`,
                 }}
@@ -95,7 +93,7 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="absolute top-4 right-4 p-3 bg-secondary/80 backdrop-blur-sm rounded-xl text-foreground hover:text-primary transition-colors"
+                className="absolute top-4 right-4 p-3 bg-secondary/80 backdrop-blur-sm rounded-xl text-foreground hover:text-primary transition-colors cursor-pointer"
                 onClick={() => toggleFavorite(product.id)}
               >
                 <Heart
@@ -138,11 +136,23 @@ export function ProductDetailClient({ product }: ProductDetailClientProps) {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4 }}
-              className="inline-flex"
+              className="flex flex-col gap-4 items-start justify-start"
             >
-              <span className="text-4xl lg:text-5xl font-bold text-primary">
+              <span className="text-2xl lg:text-3xl font-bold text-foreground">
                 {Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(price.price_ars || 0)}
               </span>
+
+              {price.price_points && (
+                <span className="text-2xl lg:text-3xl font-bold text-primary">
+                  PTS {Intl.NumberFormat('es-AR').format(price.price_star || 0)}
+                </span>
+              )}
+
+              {price.price_star && (
+                <span className="text-2xl lg:text-3xl font-bold text-yellow-400">
+                  ⭐ {Intl.NumberFormat('es-AR').format(price.price_star || 0)}
+                </span>
+              )}
             </motion.div>
 
             <p className="text-foreground/70 text-lg leading-relaxed">{product.description}</p>
