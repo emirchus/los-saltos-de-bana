@@ -4,6 +4,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@view-transition {
+  navigation: auto;
+}
+
 @utility container {
   margin-inline: auto;
   padding-inline: 2rem;
@@ -377,4 +381,61 @@
     -4px -4px 0px #000000,
     4px -4px 0px #000000,
     -4px 4px 0px #000000;
+}
+
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+
+
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes page-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+::view-transition-old(page) {
+  opacity: 1;
+  animation: page-exit 0.3s ease-in-out forwards;
+}
+
+::view-transition-new(page) {
+  opacity: 0;
+  animation: page-enter 0.3s ease-in-out forwards;
+}
+
+
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 5px;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+@utility corner-squircle {
+  @supports (corner-shape: squircle) {
+    corner-shape: squircle;
+  }
+  @supports not (corner-shape: squircle) {
+    corner-shape: rounded;
+  }
 }
