@@ -3,7 +3,7 @@ import { generatePKCE } from './pkce';
 
 const KICK_AUTHORIZE_URL = 'https://id.kick.com/oauth/authorize';
 const KICK_TOKEN_URL = 'https://id.kick.com/oauth/token';
-const KICK_API_URL = 'https://kick.com/api/v1';
+const KICK_API_URL = 'https://api.kick.com/public/v1';
 
 export interface KickTokenResponse {
   access_token: string;
@@ -14,12 +14,10 @@ export interface KickTokenResponse {
 }
 
 export interface KickUser {
-  id: number;
-  username: string;
+  user_id: number;
+  name: string;
   email?: string;
-  bio?: string;
-  profile_pic?: string;
-  created_at?: string;
+  profile_picture?: string;
 }
 
 /**
@@ -102,10 +100,11 @@ export async function exchangeKickCodeForToken(
  * Obtiene la información del usuario de KICK
  */
 export async function getKickUser(accessToken: string): Promise<KickUser> {
-  const response = await fetch(`${KICK_API_URL}/user`, {
+  const response = await fetch(`${KICK_API_URL}/users`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
+      'User-Agent': 'Bot/1.0',
     },
   });
 
@@ -114,5 +113,9 @@ export async function getKickUser(accessToken: string): Promise<KickUser> {
     throw new Error(`Error al obtener usuario de KICK: ${response.status} - ${error}`);
   }
 
-  return response.json();
+  const jsonData = await response.json();
+
+  console.log(jsonData);
+
+  return jsonData.data[0];
 }

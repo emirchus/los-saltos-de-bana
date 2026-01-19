@@ -13,6 +13,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   const { data } = await supabase.auth.getUser();
 
   let defaultUser: User | null = null;
+  console.log(defaultUser);
   let defaultProfile: Profile | null = null;
 
   if (data.user) {

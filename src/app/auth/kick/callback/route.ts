@@ -41,8 +41,12 @@ export async function GET(request: Request) {
     // Intercambiar código por token
     const tokenResponse = await exchangeKickCodeForToken(code, redirectUri, codeVerifier);
 
+    console.log(tokenResponse);
+
     // Obtener información del usuario
     const kickUser = await getKickUser(tokenResponse.access_token);
+
+    console.log(kickUser);
 
     // Usar Admin API de Supabase para crear/actualizar usuario
     const supabaseAdmin = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
@@ -52,8 +56,8 @@ export async function GET(request: Request) {
       },
     });
 
-    const email = kickUser.email || `kick_${kickUser.id}@kick.com`;
-    const kickId = kickUser.id.toString();
+    const email = kickUser.email || `kick_${kickUser.user_id}@kick.com`;
+    const kickId = kickUser.user_id.toString();
 
     // Buscar usuario existente por email o por metadata kick_id
     const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
@@ -66,9 +70,9 @@ export async function GET(request: Request) {
           user_metadata: {
             provider: 'kick',
             kick_id: kickId,
-            username: kickUser.username,
-            name: kickUser.username,
-            avatar_url: kickUser.profile_pic,
+            username: kickUser.name,
+            name: kickUser.name,
+            avatar_url: kickUser.profile_picture,
             provider_token: tokenResponse.access_token,
             provider_refresh_token: tokenResponse.refresh_token,
           },
@@ -85,9 +89,9 @@ export async function GET(request: Request) {
           user_metadata: {
             provider: 'kick',
             kick_id: kickId,
-            username: kickUser.username,
-            name: kickUser.username,
-            avatar_url: kickUser.profile_pic,
+            username: kickUser.name,
+            name: kickUser.name,
+            avatar_url: kickUser.profile_picture,
             provider_token: tokenResponse.access_token,
             provider_refresh_token: tokenResponse.refresh_token,
           },
@@ -99,6 +103,7 @@ export async function GET(request: Request) {
 
         return newUser.user.id;
       })();
+
 
     // Generar link de magic link para iniciar sesión
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
@@ -115,9 +120,9 @@ export async function GET(request: Request) {
     await supabase.from('profiles').upsert([
       {
         id: userId,
-        username: kickUser.username,
-        full_name: kickUser.username,
-        avatar_url: kickUser.profile_pic || null,
+        username: kickUser.name,
+        full_name: kickUser.name,
+        avatar_url: kickUser.profile_picture || null,
       },
     ]);
 
@@ -152,6 +157,7 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${origin}${next}`);
     }
   } catch (error) {
+    console.log(error);
     const message = error instanceof Error ? error.message : 'Error al procesar autenticación de KICK';
     return encodedRedirect('error', '/login', message);
   }
