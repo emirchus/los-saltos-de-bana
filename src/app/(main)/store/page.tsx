@@ -1,6 +1,7 @@
 import { ShoppingCart } from 'lucide-react';
 import { Suspense } from 'react';
 import { CartSidebar } from '@/app/(main)/store/components/cart-sidebar';
+import { ComingSoon } from '@/app/(main)/store/components/coming-soon';
 import { StoreClient } from '@/app/(main)/store/components/store-client';
 import { SiteHeader } from '@/components/site-header';
 import { Button } from '@/components/ui/button';
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default async function StorePage({ searchParams }: Props) {
+  return <ComingSoon />;
   return (
     <div className="w-full h-full relative overflow-auto overflow-x-hidden">
       <SiteHeader title="Tienda">
