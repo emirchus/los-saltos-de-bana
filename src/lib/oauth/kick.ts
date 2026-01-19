@@ -51,6 +51,7 @@ export async function getKickAuthorizationUrl(redirectUri: string): Promise<{ ur
     scope: 'user:read',
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
+    state: crypto.randomUUID(),
   });
 
   return {

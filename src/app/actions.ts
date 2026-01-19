@@ -37,7 +37,8 @@ export const signInWithKick = async () => {
 
   try {
     const { url } = await getKickAuthorizationUrl(redirectUri);
-    return redirect(url);
+    console.log(url)
+    return url;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error desconocido al iniciar sesión con KICK';
     return encodedRedirect('error', '/login', message);

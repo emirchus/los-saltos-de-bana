@@ -47,6 +47,12 @@ export function LoginForm({ error, success, next }: LoginFormProps) {
     }
   };
 
+  const handleKickLogin = async () => {
+    const url = await signInWithKick();
+    console.log(url);
+    window.open(url, '_blank');
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -141,12 +147,10 @@ export function LoginForm({ error, success, next }: LoginFormProps) {
               </div>
             </div>
 
-            <form action={signInWithKick}>
-              <Button type="submit" variant="outline" className="w-full" disabled={isLoading}>
-                <Image src="/kick.svg" alt="Kick" width={22} height={26} className="size-4 select-none" />
-                Continuar con Kick
-              </Button>
-            </form>
+            <Button type="submit" variant="outline" className="w-full" disabled={isLoading} onClick={handleKickLogin}>
+              <Image src="/kick.svg" alt="Kick" width={22} height={26} className="size-4 select-none" />
+              Continuar con Kick
+            </Button>
           </>
         )}
       </CardContent>
