@@ -4,10 +4,13 @@ declare global {
       NODE_ENV: 'development' | 'production';
       NEXT_PUBLIC_VERCEL_URL?: string;
       NEXT_PUBLIC_API_URL?: string;
+      KICK_CLIENT_ID?: string;
+      KICK_CLIENT_SECRET?: string;
+      SUPABASE_SERVICE_ROLE_KEY?: string;
     }
   }
 }
 
 // If this file has no import/export statements (i.e. is a script)
 // convert it into a module by adding an empty export statement.
-export {};
+export { };

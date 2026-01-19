@@ -53,6 +53,17 @@ export async function GET(request: Request) {
           website: user?.user_metadata.website,
         },
       ]);
+    } else if (session?.user.user_metadata.provider === 'keycloak') {
+      // Si es OAuth con Keycloak (configurado como proxy de KICK), crear perfil
+      await supabase.from('profiles').upsert([
+        {
+          id: user?.id as string,
+          username: user?.user_metadata.preferred_username || user?.user_metadata.username || user?.user_metadata.name,
+          full_name: user?.user_metadata.name || user?.user_metadata.full_name,
+          avatar_url: user?.user_metadata.avatar_url || user?.user_metadata.picture,
+          website: user?.user_metadata.website,
+        },
+      ]);
     } else if (user) {
       // Para usuarios que se registran con email, crear perfil básico
       await supabase.from('profiles').upsert([

@@ -398,6 +398,36 @@ export type Database = {
           },
         ]
       }
+      permissions: {
+        Row: {
+          action: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          resource: string
+          updated_at: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          description?: string | null
+          id: string
+          name: string
+          resource: string
+          updated_at?: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          resource?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       player_boards: {
         Row: {
           board: Json
@@ -563,6 +593,7 @@ export type Database = {
           bio: string | null
           full_name: string | null
           id: string
+          role_id: string | null
           sub: boolean
           updated_at: string | null
           urls: string[] | null
@@ -574,6 +605,7 @@ export type Database = {
           bio?: string | null
           full_name?: string | null
           id: string
+          role_id?: string | null
           sub?: boolean
           updated_at?: string | null
           urls?: string[] | null
@@ -585,11 +617,83 @@ export type Database = {
           bio?: string | null
           full_name?: string | null
           id?: string
+          role_id?: string | null
           sub?: boolean
           updated_at?: string | null
           urls?: string[] | null
           username?: string | null
           website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      role_permissions: {
+        Row: {
+          created_at: string
+          permission_id: string
+          role_id: string
+        }
+        Insert: {
+          created_at?: string
+          permission_id: string
+          role_id: string
+        }
+        Update: {
+          created_at?: string
+          permission_id?: string
+          role_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_permissions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      roles: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_system: boolean
+          name: string
+          role_type: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id: string
+          is_system?: boolean
+          name: string
+          role_type?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_system?: boolean
+          name?: string
+          role_type?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -756,6 +860,18 @@ export type Database = {
         }
         Returns: undefined
       }
+      assign_role: {
+        Args: { new_role_id: string; target_user_id: string }
+        Returns: boolean
+      }
+      assign_role_by_email: {
+        Args: { new_role_id: string; user_email: string }
+        Returns: boolean
+      }
+      assign_role_by_username: {
+        Args: { new_role_id: string; user_username: string }
+        Returns: boolean
+      }
       create_bingo_room:
         | {
             Args: {
@@ -818,6 +934,7 @@ export type Database = {
           bio: string | null
           full_name: string | null
           id: string
+          role_id: string | null
           sub: boolean
           updated_at: string | null
           urls: string[] | null
@@ -831,10 +948,34 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_user_role: { Args: { user_id?: string }; Returns: string }
+      has_permission: {
+        Args: { permission_id: string; user_id?: string }
+        Returns: boolean
+      }
+      has_permission_by_resource: {
+        Args: { action_name: string; resource_name: string; user_id?: string }
+        Returns: boolean
+      }
+      is_admin: { Args: { user_id?: string }; Returns: boolean }
+      is_super_admin: { Args: { user_id?: string }; Returns: boolean }
+      list_users_with_roles: {
+        Args: never
+        Returns: {
+          email: string
+          full_name: string
+          role_id: string
+          role_name: string
+          role_type: Database["public"]["Enums"]["user_role"]
+          user_id: string
+          username: string
+        }[]
+      }
     }
     Enums: {
       location_type: "salto" | "clip" | "fail"
       room_privacity: "public" | "private" | "hidden"
+      user_role: "user" | "moderator" | "admin" | "super_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -964,6 +1105,7 @@ export const Constants = {
     Enums: {
       location_type: ["salto", "clip", "fail"],
       room_privacity: ["public", "private", "hidden"],
+      user_role: ["user", "moderator", "admin", "super_admin"],
     },
   },
 } as const
