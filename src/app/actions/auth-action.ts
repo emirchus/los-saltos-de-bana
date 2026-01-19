@@ -54,7 +54,7 @@ export async function signUpWithEmail(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://saltos.bana.emirchus.ar'}/auth/callback?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://losmaspiola.com'}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   });
 
@@ -75,7 +75,7 @@ export async function resetPassword(formData: FormData) {
   }
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://saltos.bana.emirchus.ar'}/auth/reset-password`,
+    redirectTo: `${process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://losmaspiola.com'}/auth/reset-password`,
   });
 
   if (error) {

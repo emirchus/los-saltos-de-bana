@@ -3,6 +3,7 @@
 import { Crown, Star } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useGlobalRank } from '@/app/(main)/(piolas)/hooks/use-global-rank';
 import { Badge } from '@/components/ui/badge';
@@ -130,19 +131,21 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
                 </motion.div>{' '}
               </motion.div>
 
-              <motion.div
-                className="text-xl font-black mb-2 text-amber-400 text-center drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] flex items-center justify-center gap-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.8 + index * 0.15 }}
-              >
-                <p>{player.username}</p>
-                {player.is_og && (
-                  <Badge variant="outline">
-                    <Image src={`/og-badge.png`} alt={''} width={23} height={23} />
-                  </Badge>
-                )}
-              </motion.div>
+              <Link href={`/piola/${player.username}`}>
+                <motion.div
+                  className="text-xl font-black mb-2 text-amber-400 text-center drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] flex items-center justify-center gap-2"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8 + index * 0.15 }}
+                >
+                  <p>{player.username}</p>
+                  {player.is_og && (
+                    <Badge variant="outline">
+                      <Image src={`/og-badge.png`} alt={''} width={23} height={23} />
+                    </Badge>
+                  )}
+                </motion.div>
+              </Link>
               <motion.p
                 className="text-base text-zinc-300 mb-6 font-bold"
                 initial={{ opacity: 0 }}
@@ -206,64 +209,66 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
         </div>
 
         {restOfPlayers.map((player, index) => (
-          <motion.div
-            key={`${player.user_id}`}
-            className="grid grid-cols-[80px_1fr_120px] gap-4 px-8 py-5 border-t border-zinc-800/50 transition-all duration-300 cursor-pointer group"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1 + index * 0.05, duration: 0.3 }}
-            whileHover={{
-              x: 8,
-              backgroundColor: 'rgba(39, 39, 42, 0.6)',
-              transition: { duration: 0.2 },
-            }}
-          >
-            <div className="text-zinc-500 font-bold text-lg">#{index + 4}</div>
-            <div className="flex items-center gap-4">
-              <motion.div
-                className="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold text-white shadow-lg border-2 border-white/20 relative overflow-hidden"
-                style={{
-                  backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                }}
-                whileHover={{
-                  scale: 1.3,
-                  rotate: 360,
-                  boxShadow: `0 0 25px hsl(${Math.random() * 360}, 70%, 50%)`,
-                }}
-                transition={{ duration: 0.5, type: 'spring' }}
-              >
-                {player.username.charAt(0)}
-                <Image
-                  src={`/api/image?username=${player.username}`}
-                  alt={''}
-                  width={48}
-                  height={48}
-                  className="rounded-full absolute inset-0"
-                />
-              </motion.div>
-              <div className="font-bold text-white text-lg group-hover:text-amber-300 transition-colors flex items-center justify-center gap-2">
-                <span>{player.username}</span>{' '}
-                {player.is_og && (
-                  <Badge variant="outline">
-                    <Image src={`/og-badge.png`} alt={''} width={23} height={23} />
-                  </Badge>
-                )}
-              </div>
-            </div>
+          <Link href={`/piola/${player.username}`} key={`${player.user_id}`}>
             <motion.div
-              className="text-right font-black text-2xl"
-              whileHover={{ scale: 1.1 }}
-              transition={{ type: 'spring', stiffness: 400 }}
+              key={`${player.user_id}`}
+              className="grid grid-cols-[80px_1fr_120px] gap-4 px-8 py-5 border-t border-zinc-800/50 transition-all duration-300 cursor-pointer group"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1 + index * 0.05, duration: 0.3 }}
+              whileHover={{
+                x: 8,
+                backgroundColor: 'rgba(39, 39, 42, 0.6)',
+                transition: { duration: 0.2 },
+              }}
             >
-              <span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
-                {player.stars}
-              </span>
-              <span className="text-xs text-zinc-400">⭐</span>
+              <div className="text-zinc-500 font-bold text-lg">#{index + 4}</div>
+              <div className="flex items-center gap-4">
+                <motion.div
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-base font-bold text-white shadow-lg border-2 border-white/20 relative overflow-hidden"
+                  style={{
+                    backgroundColor: `hsl(${Math.random() * 360}, 70%, 50%)`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                  }}
+                  whileHover={{
+                    scale: 1.3,
+                    rotate: 360,
+                    boxShadow: `0 0 25px hsl(${Math.random() * 360}, 70%, 50%)`,
+                  }}
+                  transition={{ duration: 0.5, type: 'spring' }}
+                >
+                  {player.username.charAt(0)}
+                  <Image
+                    src={`/api/image?username=${player.username}`}
+                    alt={''}
+                    width={48}
+                    height={48}
+                    className="rounded-full absolute inset-0"
+                  />
+                </motion.div>
+                <div className="font-bold text-white text-lg group-hover:text-amber-300 transition-colors flex items-center justify-center gap-2">
+                  <span>{player.username}</span>{' '}
+                  {player.is_og && (
+                    <Badge variant="outline">
+                      <Image src={`/og-badge.png`} alt={''} width={23} height={23} />
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              <motion.div
+                className="text-right font-black text-2xl"
+                whileHover={{ scale: 1.1 }}
+                transition={{ type: 'spring', stiffness: 400 }}
+              >
+                <span className="bg-linear-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+                  {player.stars}
+                </span>
+                <span className="text-xs text-zinc-400">⭐</span>
+              </motion.div>
             </motion.div>
-          </motion.div>
+          </Link>
         ))}
       </motion.div>
     </motion.div>

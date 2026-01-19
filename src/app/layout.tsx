@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import './globals.css';
 
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { Footer } from '@/components/footer';
 import { PiolaStatusSplash } from '@/components/piola-status-splash';
 import { Toaster } from '@/components/ui/sonner';
@@ -53,16 +54,18 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body className={cn(fontSans.className, pricedownBl.variable)}>
-        <QueryProvider>
-          <SupabaseClientProvider>
-            <ThemeProvider>
-              {children}
-              <Footer />
-              <PiolaStatusSplash />
-              <Toaster />
-            </ThemeProvider>
-          </SupabaseClientProvider>
-        </QueryProvider>
+        <NuqsAdapter>
+          <QueryProvider>
+            <SupabaseClientProvider>
+              <ThemeProvider>
+                {children}
+                <Footer />
+                <PiolaStatusSplash />
+                <Toaster />
+              </ThemeProvider>
+            </SupabaseClientProvider>
+          </QueryProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

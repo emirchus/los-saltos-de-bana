@@ -127,6 +127,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           <Link href="/admin/store">Panel de la Tienda</Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton asChild isActive={pathname === '/admin/roles'}>
+                          <Link href="/admin/roles">Roles y Permisos</Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
                       <SidebarMenuSubItem className="opacity-50 pointer-events-none">
                         <SidebarMenuSubButton asChild isActive={pathname === '/admin/users'}>
                           <Link href="/admin/users">Panel de Usuarios</Link>

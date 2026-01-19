@@ -2,9 +2,10 @@
 
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Calendar, Crown, MessageSquare, Star, Trophy } from 'lucide-react';
+import { ArrowLeft, Calendar, Crown, MessageSquare, Star, Trophy } from 'lucide-react';
 import { motion } from 'motion/react';
 import Image from 'next/image';
+import Link from 'next/link';
 import React from 'react';
 import { getUserProfile, type UserProfile } from '@/app/(main)/(piolas)/actions/profile-action';
 import { Badge } from '@/components/ui/badge';
@@ -45,6 +46,15 @@ export const ProfileView = ({ profile, username }: ProfileViewProps) => {
       transition={{ duration: 0.4 }}
       className="container mx-auto px-4 py-12 max-w-6xl relative z-10"
     >
+      <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }}>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-foreground/70 hover:text-primary transition-colors mb-8"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span>Volver</span>
+        </Link>
+      </motion.div>
       {/* Header del perfil */}
       <Card className="mb-8 bg-background/80 backdrop-blur-sm border-2">
         <CardHeader>
@@ -128,7 +138,6 @@ export const ProfileView = ({ profile, username }: ProfileViewProps) => {
           </motion.div>
         </CardContent>
       </Card>
-
       {/* Estadísticas por canal */}
       {profile.userStats.length > 1 && (
         <Card className="mb-8 bg-background/80 backdrop-blur-sm">
@@ -172,7 +181,6 @@ export const ProfileView = ({ profile, username }: ProfileViewProps) => {
           </CardContent>
         </Card>
       )}
-
       {/* Historial de sesiones */}
       <Card className="bg-background/80 backdrop-blur-sm">
         <CardHeader>

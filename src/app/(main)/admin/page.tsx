@@ -1,4 +1,8 @@
+import { ShoppingBag } from 'lucide-react';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/server';
 import { getChannelsSettings } from './actions/channels-settings-action';
 import { getUsers } from './actions/users-action';
@@ -35,6 +39,23 @@ export default async function AdminPage() {
       </div>
 
       <div className="space-y-6">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5" />
+                Administrador de Tienda
+              </CardTitle>
+              <CardDescription>Gestiona productos, variantes, precios y stock</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild className="w-full">
+                <Link href="/admin/store">Ir al Administrador de Tienda</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
         <div>
           <h2 className="text-2xl font-semibold mb-4">Configuración de Canales</h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

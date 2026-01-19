@@ -3,6 +3,7 @@
 import { TwitchIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { signInWithKick } from '@/app/actions';
 import { resetPassword, signInWithEmail, signUpWithEmail } from '@/app/actions/auth-action';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -140,8 +141,8 @@ export function LoginForm({ error, success, next }: LoginFormProps) {
               </div>
             </div>
 
-            <form>
-              <Button type="submit" variant="outline" className="w-full" disabled={true}>
+            <form action={signInWithKick}>
+              <Button type="submit" variant="outline" className="w-full" disabled={isLoading}>
                 <Image src="/kick.svg" alt="Kick" width={22} height={26} className="size-4 select-none" />
                 Continuar con Kick
               </Button>
