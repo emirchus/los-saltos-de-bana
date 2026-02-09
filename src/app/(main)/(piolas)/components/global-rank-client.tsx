@@ -1,5 +1,6 @@
 'use client';
 
+import { Facehash } from 'facehash';
 import { Crown, Star } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import Image from 'next/image';
@@ -116,18 +117,15 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
                   whileHover={{ rotate: [0, -10, 10, 0] }}
                   transition={{ duration: 0.5 }}
                 >
-                  <span className="relative z-10 text-white drop-shadow-lg">
-                    <span>{player.username.charAt(0)}</span>
-                  </span>{' '}
-                  {player.profile_pic && (
-                    <Image
-                      src={`/api/image?username=${player.username}`}
-                      alt={''}
-                      width={48}
-                      height={48}
-                      className="rounded-full absolute inset-0 w-full h-full object-cover pointer-events-none"
-                    />
-                  )}
+                  <Facehash
+                    name={player.username}
+                    className="rounded-full absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    size={'100%'}
+                    variant="gradient"
+                    intensity3d="medium"
+                    interactive
+                    enableBlink
+                  />
                 </motion.div>{' '}
               </motion.div>
 
@@ -216,11 +214,6 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 1 + index * 0.05, duration: 0.3 }}
-              whileHover={{
-                x: 8,
-                backgroundColor: 'rgba(39, 39, 42, 0.6)',
-                transition: { duration: 0.2 },
-              }}
             >
               <div className="text-zinc-500 font-bold text-lg">#{index + 4}</div>
               <div className="flex items-center gap-4">
@@ -239,13 +232,14 @@ export const GlobalRankClient = ({ initialData }: GlobalRankClientProps) => {
                   }}
                   transition={{ duration: 0.5, type: 'spring' }}
                 >
-                  {player.username.charAt(0)}
-                  <Image
-                    src={`/api/image?username=${player.username}`}
-                    alt={''}
-                    width={48}
-                    height={48}
-                    className="rounded-full absolute inset-0"
+                  <Facehash
+                    name={player.username}
+                    className="rounded-full absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    size={'48px'}
+                    variant="gradient"
+                    intensity3d="medium"
+                    interactive
+                    enableBlink
                   />
                 </motion.div>
                 <div className="font-bold text-white text-lg group-hover:text-amber-300 transition-colors flex items-center justify-center gap-2">

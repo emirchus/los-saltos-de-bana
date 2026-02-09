@@ -57,6 +57,7 @@
         "clsx": "^2.1.1",
         "cookies-next": "^4.3.0",
         "date-fns": "^4.1.0",
+        "facehash": "^0.0.7",
         "geist": "^1.5.1",
         "lucide-react": "^0.446.0",
         "motion": "^12.26.2",
